@@ -1,0 +1,27 @@
+---
+title: Extracting Data
+format: html
+---
+The purpose of this document is to extract the data from PubMed, using the R entrez API solution.
+```{r}
+library(rentrez)
+set_entrez_key("c14a6209a64f2dd809205225f00d76053007")
+
+```
+
+```{r}
+query <- '"HIV" OR "AIDS" OR "human immunodeficiency virus" OR "acquired immunodeficiency syndrome"'
+
+#for testing purposes I am only going to scrape one year
+search_results <- entrez_search(db="pubmed", term=query, retmax=100, mindate="2023", maxdate="2024")
+summary_data <- entrez_summary(db="pubmed", id=search_results$ids)
+
+```
+
+
+```{r}
+articles <- lapply(summary_data, function(x) c(x$title, x$pubdate, x$mesh))
+
+df <- do.call(rbind, articles)
+head(df)
+```
