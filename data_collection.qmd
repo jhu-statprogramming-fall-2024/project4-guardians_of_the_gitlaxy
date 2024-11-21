@@ -20,8 +20,9 @@ summary_data <- entrez_summary(db="pubmed", id=search_results$ids)
 
 
 ```{r}
-articles <- lapply(summary_data, function(x) c(x$title, x$pubdate, x$mesh))
+articles <- lapply(summary_data, function(x) c(x$sorttitle, x$pubdate))
 
 df <- do.call(rbind, articles)
-head(df)
+knitr::kable(head(df))
+write.csv(df, "data/sample_collection.csv")
 ```
