@@ -7,6 +7,7 @@ The purpose of this document is to extract the data from PubMed, using the R ent
 ```{r}
 library(rentrez)
 library(progressr)
+library(data.table)
 ```
 
 ```{r}
@@ -25,10 +26,16 @@ OR "qi gong" OR "hearing" OR "strategy" OR "debate" OR "response" OR "comments" 
 
 ```{r}
 # Define year ranges
-start_year <- 1990
-end_year <- as.integer(format(Sys.Date(), "%Y"))
-year_ranges <- split(seq(start_year, end_year, by = 5), 
-                     ceiling(seq_along(seq(start_year, end_year, by = 5)) / 1))
+start_year <- 2000
+end_year <- 2024
+#end_year <- 2002
+
+# Define proper 5-year intervals
+year_ranges <- lapply(seq(start_year, end_year, by = 1), function(year) {
+  range_end <- min(year, end_year) # Ensure we don't exceed end_year
+  return(c(year, range_end))
+})
+
 
 
 # Initialize progress bar
@@ -38,72 +45,104 @@ handlers("txtprogressbar")
 
 ```{r}
 
-
-progressr::with_progress({
-  p <- progressr::progressor(along = year_ranges)
+# Function to fetch and save articles for a year range
+fetch_and_save_articles <- function(range_start, range_end) {
+  cat(sprintf("Processing range: %d-%d\n", range_start, range_end))
   
-  for (range_start in year_ranges) {
-    range_end <- min(range_start + 4, end_year)
-    p(message = sprintf("Processing range: %d-%d", range_start, range_end))
-    
-    # Search for articles in the range
-    search_results <- tryCatch(
-      entrez_search(
+  # Perform the PubMed search
+  search_results <- tryCatch(
+    entrez_search(
+      db = "pubmed",
+      term = query,
+      mindate = as.character(range_start),
+      maxdate = as.character(range_end),
+      use_history = TRUE
+    ),
+    error = function(e) {
+      message(sprintf("Error during search for range %d-%d: %s", range_start, range_end, e$message))
+      return(NULL)
+    }
+  )
+  
+  if (is.null(search_results) || search_results$count == 0) {
+    message(sprintf("No results found for range %d-%d.", range_start, range_end))
+    return(NULL)
+  }
+  
+  cat(sprintf("Found %d results for range %d-%d\n", search_results$count, range_start, range_end))
+  
+  # Fetch article summaries in batches
+  batch_size <- 100
+  range_articles <- list()
+  
+  for (start_idx in seq(0, search_results$count - 1, by = batch_size)) {
+    Sys.sleep(0.34)  # Rate limit: 3 requests per second
+    summary_data <- tryCatch(
+      entrez_summary(
         db = "pubmed",
-        term = query,
-        mindate = as.character(range_start),
-        maxdate = as.character(range_end),
-        use_history = TRUE
+        web_history = search_results$web_history,
+        retmax = batch_size,
+        retstart = start_idx
       ),
       error = function(e) {
-        cat("Error during search:", e$message, "\n")
+        message(sprintf("Error during summary fetch for batch starting at %d: %s", start_idx, e$message))
         return(NULL)
       }
     )
+    #str(summary_data)
+    if (is.null(summary_data)) next
     
-    if (is.null(search_results) || search_results$count == 0) {
-      next  # Skip this range if no results or an error occurred
-    }
-    
-    cat('Number of search results:', search_results$count, '\n')
-    range_articles <- list()
-    batch_size <- 100
-    
-    for (start_idx in seq(0, search_results$count - 1, by = batch_size)) {
-      Sys.sleep(0.1)  # Ensure at most 3 requests per second
-      
-      summary_data <- tryCatch(
-        entrez_summary(
-          db = "pubmed",
-          web_history = search_results$web_history,
-          retmax = batch_size,
-          retstart = start_idx
-        ),
-        error = function(e) {
-          cat("Error during summary fetch:", e$message, "\n")
-          return(NULL)
-        }
-      )
-      
-      if (is.null(summary_data)) {
-        next
+    # Extract and validate data
+    articles <- lapply(summary_data, function(x) {
+      if (!is.null(x$uid) && !is.null(x$sorttitle) && !is.null(x$pubdate)) {
+        pub_year <- as.numeric(sub("^.*?([0-9]{4}).*$", "\\1", x$pubdate))
+        return(list(
+          UID = x$uid,
+          Title = x$sorttitle,
+          PublicationDate = x$pubdate,
+          PublicationYear = pub_year
+        ))
+        
       }
-      
-      articles <- lapply(summary_data, function(x) c(x$uid, x$sorttitle, x$pubdate))
-      batch_df <- do.call(rbind, articles)
-      batch_df <- data.frame(batch_df, stringsAsFactors = FALSE)
-      colnames(batch_df) <- c("UID", "Title", "PublicationDate")
-      
-      range_articles[[paste0(start_idx)]] <- batch_df
+      NULL
+    })
+
+    # Filter out NULL entries
+    articles <- Filter(Negate(is.null), articles)
+    # Combine into a data frame or data table
+    if (length(articles) > 0) {
+      batch_df <- data.table::rbindlist(articles, use.names = TRUE, fill = TRUE)
+      range_articles[[as.character(start_idx)]] <- batch_df
+    } else {
+      message(sprintf("No valid articles in batch starting at %d", start_idx))
     }
-    
-    # Combine batches for the range and save as CSV
-    if (length(range_articles) > 0) {
-      range_df <- do.call(rbind, range_articles)
-      file_name <- paste0("data/pubmed_hiv_articles_", range_start, "_", range_end, ".csv")
-      write.csv(range_df, file_name, row.names = FALSE)
-      cat("Saved articles for range", range_start, "-", range_end, "to", file_name, "\n")
-    }
+
+  }
+
+  if (length(range_articles) > 0) {
+    range_df <- data.table::rbindlist(range_articles, use.names = TRUE, fill = TRUE)
+    range_df <- unique(range_df)  # Deduplicate
+    cat("there are ", nrow(range_df), "articles for this range")
+    file_name <- sprintf("data/pubmed_hiv_articles_%d_%d.csv", range_start, range_end)
+    data.table::fwrite(range_df, file_name)  # Write to CSV
+    cat(sprintf("Saved articles for range %d-%d to %s\n", range_start, range_end, file_name))
+  } else {
+    message(sprintf("No articles to save for range %d-%d.", range_start, range_end))
+  }
+
+}
+
+```
+
+
+```{r}
+
+# Main processing loop with progress bar
+progressr::with_progress({
+  p <- progressr::progressor(along = year_ranges)
+  for (range in year_ranges) {
+    p(message = sprintf("Processing range %d-%d", range[1], range[2]))
+    fetch_and_save_articles(range[1], range[2])
   }
 })
 
