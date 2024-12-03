@@ -1,128 +1,110 @@
 ---
-title: Extracting Data
+title: Extracting Data - Everything
 format: html
 ---
-The purpose of this document is to extract the data from PubMed, using the R entrez API solution.
-# Demo
+The purpose of this document is to extract the data from PubMed, using the R entrez API solution. Going to play around with parallelization, because it could speed things up greatly. Nevermind, pubmed does not like parallel
 
-## Acquiring title, uid, date
 ```{r}
 library(rentrez)
+library(progressr)
+```
+
+```{r}
+# Set your Entrez API key
 set_entrez_key("c14a6209a64f2dd809205225f00d76053007")
 
-```
-
-```{r}
-query <- '"HIV" OR "AIDS" OR "human immunodeficiency virus" OR "acquired immunodeficiency syndrome"'
-
-#for testing purposes I am only going to scrape one year
-search_results <- entrez_search(db="pubmed", term=query, retmax=100, mindate="2023", maxdate="2024")
-summary_data <- entrez_summary(db="pubmed", id=search_results$ids)
-
-```
-
-
-```{r}
-articles <- lapply(summary_data, function(x) c(x$sorttitle, x$pubdate))
-
-df <- do.call(rbind, articles)
-knitr::kable(head(df))
-write.csv(df, "data/sample_collection.csv")
-```
-
-## Acquiring number of times cited
-
-```{r}
-
-pmid_list <- c("2344532", "2445435")
-
-get_citation_count <- function(pmid) {
-  links <- entrez_link(dbfrom = "pubmed", db = "pubmed", LinkName = "pubmed_pubmed_citedin", id = pmid)
-  
-  cited_pmids <- links$links$pubmed_pubmed_citedin
-  
-  if (!is.null(cited_pmids)) {
-    return(length(cited_pmids))
-  } else {
-    return(0)
-  }
-}
-
-citation_counts <- sapply(pmid_list, get_citation_count)
-
-results <- data.frame(PMID = pmid_list, Citation_Count = citation_counts)
-
-print(results)
+# Define query
+query <- '("HIV" OR "AIDS") AND 
+("epidemic" OR "treatment" OR "prevention" OR "detection" OR "vaccine" OR 
+"mathematical modeling" OR "prognosis" OR "case study" OR "healthcare" OR 
+"public health" OR "immunology" OR "infectious diseases") 
+NOT ("conference" OR "summit" OR "legal" OR "audiology" OR "non-HIV infections" 
+OR "qi gong" OR "hearing" OR "strategy" OR "debate" OR "response" OR "comments" OR "editorial")'
 
 ```
 
-Downsides of this: It seems rather slow. Probably not a good idea to do this for everything unless we have finalized the search string. Maybe we could do this for a more specific time window as well?
+```{r}
+# Define year ranges
+start_year <- 1990
+end_year <- as.integer(format(Sys.Date(), "%Y"))
+year_ranges <- split(seq(start_year, end_year, by = 5), 
+                     ceiling(seq_along(seq(start_year, end_year, by = 5)) / 1))
 
-# Everything
+
+# Initialize progress bar
+handlers(global = TRUE)
+handlers("txtprogressbar") 
+```
 
 ```{r}
-#query <- '"HIV" OR "AIDS" OR "human immunodeficiency virus" OR "acquired immunodeficiency syndrome"'
-query = '("HIV" OR "AIDS") AND ("epidemic" OR "treatment" OR "prevention" OR "detection" OR "vaccine" OR "mathematical modeling" OR "prognosis" OR "case study" OR "healthcare" OR "public health" OR "immunology" OR "infectious diseases") NOT ("conference" OR "summit" OR "legal" OR "audiology" OR "non-HIV infections")'
 
-all_articles <- list()
 
-#adjust upper limit year as necessary, keeping it at 1990 for testing
-for (year in 1990:1990) {
-  cat("Fetching articles for year:", year, "\n")
+progressr::with_progress({
+  p <- progressr::progressor(along = year_ranges)
   
-  #  enable web history as demonstrated in the rentrez example on CRAN
-  search_results <- entrez_search(
-    db = "pubmed", 
-    term = query, 
-    mindate = as.character(year), 
-    maxdate = as.character(year), 
-    use_history = TRUE
-  )
-  cat('number of search results:', search_results$count, '\n')
-  
-  if (search_results$count == 0) {
-    next
-  }
-  
-  batch_size <- 100 
-  for (start in seq(0, search_results$count - 1, by = batch_size)) {
-    cat("Fetching batch starting at:", start, "\n")
-    # Fetch summaries from the web history
-    summary_data <- entrez_summary(
-      db = "pubmed",
-      web_history = search_results$web_history,
-      retmax = batch_size,
-      retstart = start
+  for (range_start in year_ranges) {
+    range_end <- min(range_start + 4, end_year)
+    p(message = sprintf("Processing range: %d-%d", range_start, range_end))
+    
+    # Search for articles in the range
+    search_results <- tryCatch(
+      entrez_search(
+        db = "pubmed",
+        term = query,
+        mindate = as.character(range_start),
+        maxdate = as.character(range_end),
+        use_history = TRUE
+      ),
+      error = function(e) {
+        cat("Error during search:", e$message, "\n")
+        return(NULL)
+      }
     )
     
-    articles <- lapply(summary_data, function(x) c(x$uid, x$sorttitle, x$pubdate))
-    batch_df <- do.call(rbind, articles)
-    batch_df <- data.frame(batch_df, stringsAsFactors = FALSE)
-    colnames(batch_df) <- c("Title", "PublicationDate")
-    #batch_df$Year <- year # don't really need this
+    if (is.null(search_results) || search_results$count == 0) {
+      next  # Skip this range if no results or an error occurred
+    }
     
-    all_articles[[paste0(year, "_", start)]] <- batch_df
+    cat('Number of search results:', search_results$count, '\n')
+    range_articles <- list()
+    batch_size <- 100
+    
+    for (start_idx in seq(0, search_results$count - 1, by = batch_size)) {
+      Sys.sleep(0.1)  # Ensure at most 3 requests per second
+      
+      summary_data <- tryCatch(
+        entrez_summary(
+          db = "pubmed",
+          web_history = search_results$web_history,
+          retmax = batch_size,
+          retstart = start_idx
+        ),
+        error = function(e) {
+          cat("Error during summary fetch:", e$message, "\n")
+          return(NULL)
+        }
+      )
+      
+      if (is.null(summary_data)) {
+        next
+      }
+      
+      articles <- lapply(summary_data, function(x) c(x$uid, x$sorttitle, x$pubdate))
+      batch_df <- do.call(rbind, articles)
+      batch_df <- data.frame(batch_df, stringsAsFactors = FALSE)
+      colnames(batch_df) <- c("UID", "Title", "PublicationDate")
+      
+      range_articles[[paste0(start_idx)]] <- batch_df
+    }
+    
+    # Combine batches for the range and save as CSV
+    if (length(range_articles) > 0) {
+      range_df <- do.call(rbind, range_articles)
+      file_name <- paste0("data/pubmed_hiv_articles_", range_start, "_", range_end, ".csv")
+      write.csv(range_df, file_name, row.names = FALSE)
+      cat("Saved articles for range", range_start, "-", range_end, "to", file_name, "\n")
+    }
   }
-}
-
-```
-
-```{r}
-final_df <- do.call(rbind, all_articles)
-knitr::kable(head(final_df))
-
-write.csv(final_df, "data/full_pubmed_hiv_articles.csv", row.names = FALSE)
-
-cat("Data scraping complete. Saved results to 'data/full_pubmed_hiv_articles.csv'\n")
-
-
-```
-
-::: callout-note
-one thing I am noticing is that the apostrophes are replaced with spaces, i.e. ' ', which might not be good down the line. However, using the sorttitle instead of title could be better as we don't have to do as much string transformation. Nevertheless, apostrophized words shoudn't be too important tbh.
-:::
-
-```{r}
-
+})
 
 ```
