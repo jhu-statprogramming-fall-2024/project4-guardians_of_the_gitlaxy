@@ -1,0 +1,96 @@
+---
+title: "clean_demo"
+format: html
+editor: visual
+---
+
+## Demo cleaning code
+
+```{r}
+# load data
+library(readr)
+articles <- read_csv("data_demo/pubmed_hiv_articles_2000_2002.csv")
+```
+
+### Using Tidytext
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(tidytext)
+
+# tokenize
+articles_token <-
+    articles %>%
+    unnest_tokens(
+        output = word,  # Output column for tokens
+        input = Title,  # Input column to tokenize
+        token = "words",
+        drop = FALSE
+    )
+
+# stop words
+data(stop_words)
+table(stop_words$lexicon)
+
+# clean article titles by removing stop words
+articles_clean <-
+    articles_token %>%
+    anti_join(stop_words)
+
+# count word frequency
+articles_clean %>%
+    count(word, sort = TRUE) %>%
+    head(n = 30)
+```
+
+### Using Quanteda
+
+```{r}
+library(quanteda)
+library(quanteda.textstats)
+library(quanteda.textplots)
+
+# option 2: clean example data without tokenizing
+articles2 <- articles %>%
+    mutate(Clean_Title = str_remove_all(Title, paste0("\\b(", paste(stop_words$word, collapse = "|"), ")\\b"))) %>%
+    mutate(Clean_Title = str_squish(Clean_Title)) # Clean up extra spaces
+
+# Detect collocations (common phrases)
+corpus <- corpus(articles2, text_field = "Clean_Title")
+
+# Tokenize and preserve detected phrases
+tokens <- tokens(corpus, remove_punct = TRUE, remove_numbers = TRUE)
+
+# Detect common collocations (bigrams or common phrases)
+collocations <- textstat_collocations(corpus, size = 2)  # Detect bigrams (phrases)
+print(collocations)
+
+# Use tokens_compound to preserve common collocations
+tokens_preserved <- tokens_compound(tokens, pattern = phrase(collocations$collocation))
+
+# create document feature matrix
+dfm <- corpus %>%
+    tokens(remove_punct = TRUE, remove_numbers = TRUE) %>%
+    dfm()
+print(corpus)
+
+# meaningful docid names for corpus
+docid <- paste(articles2$PublicationYear, 
+               articles2$UID, sep = " ")
+docnames(corpus) <- docid
+print(corpus)
+
+# document variables are stored in corpus and can be subset
+head(docvars(corpus))
+corp_recent <- corpus_subset(corpus, PublicationYear >= 2001)
+
+# create feature co-occurence matrix
+fcm <- fcm(dfm)
+head(fcm, 10)
+
+# example visualization
+top <- names(topfeatures(dfm, 20))
+fcm_top <- fcm_select(fcm, pattern = top)
+textplot_network(fcm_top, min_freq = 0.1, edge_alpha = 0.8, edge_size = 5)
+```
