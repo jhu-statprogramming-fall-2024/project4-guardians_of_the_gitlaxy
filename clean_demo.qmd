@@ -9,7 +9,7 @@ editor: visual
 ```{r}
 # load data
 library(readr)
-articles <- read_csv("data_demo/pubmed_hiv_articles_2000_2002.csv")
+articles <- read_csv("data/pubmed_hiv_articles_2024_2024.csv")
 ```
 
 ### Using Tidytext
@@ -50,7 +50,73 @@ articles_clean %>%
     head(n = 30)
 ```
 
-### Using Quanteda
+### Cleaning function 
+
+```{r}
+# function for word frequency
+combine_top_words_per_year <- function(file_path_template, years, top_n = 30, custom_stop_words = NULL) {
+  # file_path_template: Template for file paths
+  # years: A vector of years
+  # top_n: Number of top words to extract for each year
+  # custom_stop_words: Data frame of additional stop words to remove
+  
+  # Load default stop words
+  data(stop_words)
+  
+  # Combine default and custom stop words
+  if (!is.null(custom_stop_words)) {
+    stop_words <- bind_rows(stop_words, custom_stop_words)
+  }
+  
+  combined_results <- data.frame()  # Initialize an empty data frame
+  
+  for (year in years) {
+    # Generate the file path for the current year
+    file_path <- gsub("YEAR", year, file_path_template)
+    
+    if (file.exists(file_path)) {
+      # Read the CSV file
+      articles <- read.csv(file_path)
+      
+      # Ensure the required column exists
+      if ("Title" %in% colnames(articles)) {
+        # Tokenize and clean titles
+        articles_clean <- articles %>%
+          unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
+          anti_join(stop_words, by = "word") %>%
+          mutate(word = str_replace(word, "[0-9]+", "")) %>%
+          filter(word != "")
+        
+        # Count word frequencies
+        top_words <- articles_clean %>%
+          count(word, sort = TRUE) %>%
+          head(n = top_n) %>%
+          mutate(Year = year)  # Add year column
+        
+        # Combine results
+        combined_results <- bind_rows(combined_results, top_words)
+      } else {
+        warning(sprintf("Missing 'Title' column in file for year %s: %s", year, file_path))
+      }
+    } else {
+      warning(sprintf("File for year %s not found: %s", year, file_path))
+    }
+  }
+  
+  return(combined_results)
+}
+```
+
+```{r}
+# example
+combine_top_words_per_year(file_path_template = "data/pubmed_hiv_articles_YEAR_YEAR.csv", 
+                           years = 2014:2024, 
+                           top_n = 30, 
+                           custom_stop_words = hiv_words
+                           )
+```
+
+### Another option: using Quanteda package for multi-word expressions
 
 ```{r}
 library(quanteda)
@@ -103,59 +169,4 @@ head(fcm, 10)
 top <- names(topfeatures(dfm, 30))
 fcm_top <- fcm_select(fcm, pattern = top)
 textplot_network(fcm_top, min_freq = 0.1, edge_alpha = 0.8, edge_size = 5)
-```
-
-```{r}
-# function for word frequency
-combine_top_words_per_year <- function(pubmed_hiv_articles_YEAR, years, top_n = 30, custom_stop_words = NULL) {
-  # file_path_template: Template for file paths
-  # years: A vector of years
-  # top_n: Number of top words to extract for each year
-  # custom_stop_words: Data frame of additional stop words to remove
-  
-  # Load default stop words
-  data(stop_words)
-  
-  # Combine default and custom stop words
-  if (!is.null(custom_stop_words)) {
-    stop_words <- bind_rows(stop_words, custom_stop_words)
-  }
-  
-  combined_results <- data.frame()  # Initialize an empty data frame
-  
-  for (year in years) {
-    # Generate the file path for the current year
-    file_path <- gsub("YEAR", year, pubmed_hiv_articles_YEAR)
-    
-    if (file.exists(file_path)) {
-      # Read the CSV file
-      articles <- read.csv(file_path)
-      
-      # Ensure the required column exists
-      if ("Title" %in% colnames(articles)) {
-        # Tokenize and clean titles
-        articles_clean <- articles %>%
-          unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
-          anti_join(stop_words, by = "word") %>%
-          mutate(word = str_replace(word, "[0-9]+", "")) %>%
-          filter(word != "")
-        
-        # Count word frequencies
-        top_words <- articles_clean %>%
-          count(word, sort = TRUE) %>%
-          head(n = top_n) %>%
-          mutate(Year = year)  # Add year column
-        
-        # Combine results
-        combined_results <- bind_rows(combined_results, top_words)
-      } else {
-        warning(sprintf("Missing 'Title' column in file for year %s: %s", year, file_path))
-      }
-    } else {
-      warning(sprintf("File for year %s not found: %s", year, file_path))
-    }
-  }
-  
-  return(combined_results)
-}
 ```
