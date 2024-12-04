@@ -33,10 +33,16 @@ articles_token <-
 data(stop_words)
 table(stop_words$lexicon)
 
-# clean article titles by removing stop words
+# common words
+hiv_words <- data.frame(word = c("human", "immunodeficiency", "virus", "hiv", "aids", "acquired", "immunodeficiency", "syndrome", "disease", "diseases", "study"))
+
+# clean article titles by removing stop words, common words, and numbers
 articles_clean <-
     articles_token %>%
-    anti_join(stop_words)
+    anti_join(stop_words) %>%
+    anti_join(hiv_words) %>%
+    mutate(word = str_replace(string = word, pattern = "[0-9]+", replace = "")) %>%
+    filter(word != "")
 
 # count word frequency
 articles_clean %>%
@@ -51,10 +57,12 @@ library(quanteda)
 library(quanteda.textstats)
 library(quanteda.textplots)
 
-# option 2: clean example data without tokenizing
+# clean example data without tokenizing
 articles2 <- articles %>%
-    mutate(Clean_Title = str_remove_all(Title, paste0("\\b(", paste(stop_words$word, collapse = "|"), ")\\b"))) %>%
-    mutate(Clean_Title = str_squish(Clean_Title)) # Clean up extra spaces
+    mutate(Clean_Title = str_remove_all(Title, paste0("\\b(", paste(stop_words$word, collapse = "|"), ")\\b")),
+           Clean_Title = str_remove_all(Clean_Title, paste0("\\b(", paste(hiv_words$word, collapse = "|"), ")\\b")),
+           Clean_Title = str_replace(string = Clean_Title, pattern = "[0-9]+", replace = ""),
+           Clean_Title = str_squish(Clean_Title))
 
 # Detect collocations (common phrases)
 corpus <- corpus(articles2, text_field = "Clean_Title")
@@ -64,7 +72,9 @@ tokens <- tokens(corpus, remove_punct = TRUE, remove_numbers = TRUE)
 
 # Detect common collocations (bigrams or common phrases)
 collocations <- textstat_collocations(corpus, size = 2)  # Detect bigrams (phrases)
-print(collocations)
+collocations_top <- collocations %>%
+  arrange(desc(z)) %>%
+  head(n = 30)
 
 # Use tokens_compound to preserve common collocations
 tokens_preserved <- tokens_compound(tokens, pattern = phrase(collocations$collocation))
@@ -85,12 +95,67 @@ print(corpus)
 head(docvars(corpus))
 corp_recent <- corpus_subset(corpus, PublicationYear >= 2001)
 
-# create feature co-occurence matrix
+# create feature co-occurrence matrix
 fcm <- fcm(dfm)
 head(fcm, 10)
 
 # example visualization
-top <- names(topfeatures(dfm, 20))
+top <- names(topfeatures(dfm, 30))
 fcm_top <- fcm_select(fcm, pattern = top)
 textplot_network(fcm_top, min_freq = 0.1, edge_alpha = 0.8, edge_size = 5)
+```
+
+```{r}
+# function for word frequency
+combine_top_words_per_year <- function(pubmed_hiv_articles_YEAR, years, top_n = 30, custom_stop_words = NULL) {
+  # file_path_template: Template for file paths
+  # years: A vector of years
+  # top_n: Number of top words to extract for each year
+  # custom_stop_words: Data frame of additional stop words to remove
+  
+  # Load default stop words
+  data(stop_words)
+  
+  # Combine default and custom stop words
+  if (!is.null(custom_stop_words)) {
+    stop_words <- bind_rows(stop_words, custom_stop_words)
+  }
+  
+  combined_results <- data.frame()  # Initialize an empty data frame
+  
+  for (year in years) {
+    # Generate the file path for the current year
+    file_path <- gsub("YEAR", year, pubmed_hiv_articles_YEAR)
+    
+    if (file.exists(file_path)) {
+      # Read the CSV file
+      articles <- read.csv(file_path)
+      
+      # Ensure the required column exists
+      if ("Title" %in% colnames(articles)) {
+        # Tokenize and clean titles
+        articles_clean <- articles %>%
+          unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
+          anti_join(stop_words, by = "word") %>%
+          mutate(word = str_replace(word, "[0-9]+", "")) %>%
+          filter(word != "")
+        
+        # Count word frequencies
+        top_words <- articles_clean %>%
+          count(word, sort = TRUE) %>%
+          head(n = top_n) %>%
+          mutate(Year = year)  # Add year column
+        
+        # Combine results
+        combined_results <- bind_rows(combined_results, top_words)
+      } else {
+        warning(sprintf("Missing 'Title' column in file for year %s: %s", year, file_path))
+      }
+    } else {
+      warning(sprintf("File for year %s not found: %s", year, file_path))
+    }
+  }
+  
+  return(combined_results)
+}
 ```
