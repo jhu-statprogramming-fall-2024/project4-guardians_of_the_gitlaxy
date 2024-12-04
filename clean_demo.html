@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>clean_demo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="clean_demo_files/libs/clipboard/clipboard.min.js"></script>
+<script src="clean_demo_files/libs/quarto-html/quarto.js"></script>
+<script src="clean_demo_files/libs/quarto-html/popper.min.js"></script>
+<script src="clean_demo_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="clean_demo_files/libs/quarto-html/anchor.min.js"></script>
+<link href="clean_demo_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="clean_demo_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="clean_demo_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="clean_demo_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="clean_demo_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">clean_demo</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="demo-cleaning-code" class="level2">
+<h2 class="anchored" data-anchor-id="demo-cleaning-code">Demo cleaning code</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>articles <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_demo/pubmed_hiv_articles_2000_2002.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 633 Columns: 4
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): Title, PublicationDate
+dbl (2): UID, PublicationYear
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<section id="using-tidytext" class="level3">
+<h3 class="anchored" data-anchor-id="using-tidytext">Using Tidytext</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ purrr     1.0.2
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tokenize</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>articles_token <span class="ot">&lt;-</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    articles <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest_tokens</span>(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">output =</span> word,  <span class="co"># Output column for tokens</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">input =</span> Title,  <span class="co"># Input column to tokenize</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">token =</span> <span class="st">"words"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">drop =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># stop words</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(stop_words)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(stop_words<span class="sc">$</span>lexicon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    onix    SMART snowball 
+     404      571      174 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># clean article titles by removing stop words</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>articles_clean <span class="ot">&lt;-</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    articles_token <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">anti_join</span>(stop_words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(word)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># count word frequency</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>articles_clean <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(word, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 2
+   word          n
+   &lt;chr&gt;     &lt;int&gt;
+ 1 hiv         307
+ 2 infection    90
+ 3 aids         85
+ 4 patients     71
+ 5 treatment    61
+ 6 1            60
+ 7 human        52
+ 8 infected     49
+ 9 virus        49
+10 drug         37
+# ℹ 20 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="using-quanteda" class="level3">
+<h3 class="anchored" data-anchor-id="using-quanteda">Using Quanteda</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quanteda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Package version: 4.1.0
+Unicode version: 14.0
+ICU version: 71.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Parallel computing: disabled</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>See https://quanteda.io for tutorials and examples.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quanteda.textstats)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quanteda.textplots)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># option 2: clean example data without tokenizing</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>articles2 <span class="ot">&lt;-</span> articles <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Clean_Title =</span> <span class="fu">str_remove_all</span>(Title, <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">b("</span>, <span class="fu">paste</span>(stop_words<span class="sc">$</span>word, <span class="at">collapse =</span> <span class="st">"|"</span>), <span class="st">")</span><span class="sc">\\</span><span class="st">b"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Clean_Title =</span> <span class="fu">str_squish</span>(Clean_Title)) <span class="co"># Clean up extra spaces</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Detect collocations (common phrases)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">corpus</span>(articles2, <span class="at">text_field =</span> <span class="st">"Clean_Title"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Tokenize and preserve detected phrases</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>tokens <span class="ot">&lt;-</span> <span class="fu">tokens</span>(corpus, <span class="at">remove_punct =</span> <span class="cn">TRUE</span>, <span class="at">remove_numbers =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Detect common collocations (bigrams or common phrases)</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>collocations <span class="ot">&lt;-</span> <span class="fu">textstat_collocations</span>(corpus, <span class="at">size =</span> <span class="dv">2</span>)  <span class="co"># Detect bigrams (phrases)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(collocations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     collocation count count_nested length      lambda
+1                  hiv infection    47            0      2  2.96217833
+2                          hiv 1    49            0      2  4.41717084
+3         antiretroviral therapy    15            0      2  6.05231559
+4              infected patients    18            0      2  3.89960082
+5         immunodeficiency virus    25            0      2  7.25168768
+6         human immunodeficiency    26            0      2  7.54450846
+7                   hiv infected    30            0      2  3.23695115
+8          active antiretroviral     9            0      2  6.57277740
+9                     drug users    11            0      2  6.50213302
+10           protease inhibitors     7            0      2  6.59965221
+11                  risk factors     8            0      2  5.67434143
+12        pulmonary tuberculosis     8            0      2  5.99465712
+13           vaccine development     6            0      2  5.54387451
+14                      hiv aids    28            0      2  2.24363251
+15          transmitted diseases     6            0      2  6.18509101
+16              african american     4            0      2  6.72634240
+17                 south african     4            0      2  6.55907031
+18             positive patients     8            0      2  4.05380765
+19                   health care     5            0      2  5.00283209
+20            child transmission     5            0      2  5.60784247
+21      opportunistic infections     6            0      2  6.46599340
+22               virus infection    11            0      2  2.97474642
+23      transcriptase inhibitors     4            0      2  5.98743470
+24         diseases surveillance     4            0      2  5.70294576
+25                  mother child     6            0      2  8.98200838
+26               hepatitis virus     6            0      2  4.40390493
+27    mycobacterium tuberculosis     6            0      2  6.22567009
+28                  south africa     4            0      2  5.75497806
+29                   1 infection    12            0      2  2.69757540
+30                current status     3            0      2  6.67613454
+31            protease inhibitor     5            0      2  7.71547046
+32           infectious diseases     4            0      2  5.45761959
+33            nucleoside reverse     3            0      2  6.72677827
+34          developing countries     3            0      2  6.55950628
+35                   dna vaccine     4            0      2  4.77052655
+36                 public health     4            0      2  5.11297306
+37               gene expression     3            0      2  7.26435689
+38                  oral lesions     5            0      2  7.37834405
+39               substance abuse     3            0      2  6.29080632
+40                cell responses     3            0      2  5.82752849
+41               anti retroviral     3            0      2  6.62749657
+42           surveillance system     3            0      2  5.28457725
+43                  quality life     4            0      2  9.12576240
+44              peripheral blood     3            0      2  6.41575141
+45           disease progression     3            0      2  5.50388202
+46          prevalence hepatitis     3            0      2  4.98803241
+47              hodgkin lymphoma     3            0      2  8.02693243
+48            lentiviral vectors     3            0      2  8.02693243
+49                 cmv retinitis     3            0      2  7.77540028
+50         methadone maintenance     3            0      2  7.77540028
+51              infected patient     5            0      2  3.80410241
+52                american women     3            0      2  5.17334429
+53             infected children     5            0      2  3.58832995
+54               natural history     2            0      2  6.59141241
+55         interventions prevent     2            0      2  6.33988017
+56    simultaneous determination     2            0      2  7.17963457
+57              antiviral agents     2            0      2  7.51632448
+58                social support     2            0      2  6.39052390
+59             preventing mother     2            0      2  6.92810242
+60        expression mononuclear     2            0      2  6.92810242
+61                injection drug     4            0      2  5.53217257
+62             review literature     3            0      2  7.02709655
+63                    virus type     4            0      2  4.97366390
+64          molecular mechanisms     2            0      2  6.22325195
+65              chimeric viruses     2            0      2  6.72721395
+66            derived lentiviral     2            0      2  6.72721395
+67             systematic review     3            0      2  6.92679509
+68                 health status     3            0      2  4.97717152
+69              american society     2            0      2  6.55994205
+70                low prevalence     2            0      2  5.82840081
+71             mononuclear cells     3            0      2  6.83560526
+72                 highly active    10            0      2 10.55954016
+73             specific immunity     2            0      2  5.60355886
+74           chemokine receptors     2            0      2  8.02736773
+75             predictors condom     2            0      2  7.69067787
+76          children adolescents     2            0      2  6.29124229
+77               sexual behavior     2            0      2  6.29124229
+78                treated highly     2            0      2  6.29124229
+79                risk behaviors     4            0      2  6.32753583
+80               research agenda     2            0      2  7.43914577
+81          sexually transmitted     8            0      2 10.85971028
+82       cryptococcal meningitis     2            0      2  8.53841094
+83                          il 5     2            0      2  8.53841094
+84        international workshop     2            0      2  8.53841094
+85               rhesus macaques     2            0      2  8.53841094
+86               drug resistance     3            0      2  4.55591419
+87                    1 infected     7            0      2  2.69721658
+88                        type 1     4            0      2  4.65528325
+89               central nervous     7            0      2 10.73476491
+90                  aids related     5            0      2  3.27764259
+91             blood mononuclear     2            0      2  5.98830739
+92          cell transplantation     2            0      2  5.98830739
+93               community based     2            0      2  5.98830739
+94               immune recovery     2            0      2  5.98830739
+95              developing world     2            0      2  6.92766683
+96             initiation highly     2            0      2  6.80228582
+97           oral manifestations     2            0      2  5.82752849
+98                  oral mucosal     2            0      2  5.82752849
+99             prevention mother     2            0      2  5.16762813
+100        vertical transmission     3            0      2  6.16203523
+101                 cohort study     2            0      2  5.28951248
+102                 blood donors     2            0      2  6.49935107
+103              related quality     2            0      2  5.17466531
+104               nervous system     7            0      2  8.99863847
+105              clinical trials     2            0      2  5.12180309
+106           infections persons     2            0      2  5.51135598
+107              related hodgkin     2            0      2  5.51135598
+108             transmission hiv    10            0      2  2.44483530
+109            clinical features     2            0      2  5.45849381
+110        reverse transcriptase     8            0      2 11.95854034
+111          hepatitis hepatitis     2            0      2  4.46787662
+112                  cmv disease     2            0      2  4.66938086
+113                 related oral     2            0      2  4.55497051
+114         periodontal diseases     2            0      2  5.36041833
+115         pneumocystis carinii     3            0      2  9.97349546
+116              recent advances     3            0      2  9.97349546
+117       visceral leishmaniasis     3            0      2  9.97349546
+118           infectious disease     2            0      2  4.50210814
+119            prospective study     2            0      2  6.13724698
+120                immune system     2            0      2  4.29950669
+121        tuberculosis patients     5            0      2  2.80752879
+122               saharan africa     6            0      2  8.46922069
+123       clinical immunological     2            0      2  5.96953787
+124           vaccine protection     2            0      2  5.96953787
+125                  past future     3            0      2  8.67334187
+126            inhibitor therapy     2            0      2  4.67208440
+127               kaposi sarcoma     4            0      2 11.32342218
+128                 asia pacific     2            0      2  9.63724076
+129                  candida spp     2            0      2  9.63724076
+130          cerebrospinal fluid     2            0      2  9.63724076
+131 encephalitozoon intestinalis     2            0      2  9.63724076
+132           hematopoietic stem     2            0      2  9.63724076
+133                   line probe     2            0      2  9.63724076
+134        liposomal doxorubicin     2            0      2  9.63724076
+135                 mwanza rakai     2            0      2  9.63724076
+136         ocular toxoplasmosis     2            0      2  9.63724076
+137                 papua guinea     2            0      2  9.63724076
+138                 quarter 2002     2            0      2  9.63724076
+139                       rt pcr     2            0      2  9.63724076
+140        immune reconstitution     4            0      2  8.37702327
+141               drug resistant     2            0      2  4.63960448
+142                mental health     2            0      2  5.74018656
+143                     class ii     2            0      2  9.12619760
+144              direct indirect     2            0      2  9.12619760
+145                      hbv hcv     2            0      2  9.12619760
+146         hepatology nutrition     2            0      2  9.12619760
+147                 nucleic acid     2            0      2  9.12619760
+148   pediatric gastroenterology     2            0      2  9.12619760
+149              western denmark     2            0      2  9.12619760
+150               public private     3            0      2  8.50607002
+151      surveillance highlights     3            0      2  8.50607002
+152              health services     2            0      2  5.69996255
+153        maintenance treatment     3            0      2  5.32760906
+154                    stem cell     3            0      2  8.36275136
+155                       5 gene     2            0      2  8.78950779
+156             decision support     2            0      2  8.78950779
+157              murine leukemia     2            0      2  8.78950779
+158               natural killer     2            0      2  8.78950779
+159             positive patient     2            0      2  3.79881162
+160                 patient aids     3            0      2  3.49961074
+161                    1996 2000     2            0      2  8.33708736
+162               social network     2            0      2  8.33708736
+163                 aids vaccine     4            0      2  2.77988654
+164               viral diseases     2            0      2  3.74879247
+165             intravenous drug     2            0      2  5.39571145
+166        chromatography tandem     2            0      2 10.73607054
+167  gastroenterology hepatology     2            0      2 10.73607054
+168           gender differences     2            0      2 10.73607054
+169        interpretation mwanza     2            0      2 10.73607054
+170        liquid chromatography     2            0      2 10.73607054
+171                       lp bm5     2            0      2 10.73607054
+172            mass spectrometry     2            0      2 10.73607054
+173                 paulo brazil     2            0      2 10.73607054
+174          pegylated liposomal     2            0      2 10.73607054
+175                  probe assay     2            0      2 10.73607054
+176                  tandem mass     2            0      2 10.73607054
+177                    te ivoire     2            0      2 10.73607054
+178            toxoplasma gondii     2            0      2 10.73607054
+179             week application     2            0      2 10.73607054
+180             viral infections     2            0      2  3.70311104
+181 opportunistic microorganisms     2            0      2  8.16981555
+182               positive women     2            0      2  3.67701279
+183                  nk activity     2            0      2  8.02649694
+184            human lymphocytes     2            0      2  4.52036024
+185               virus envelope     2            0      2  5.18541212
+186                   women risk     2            0      2  3.55425277
+187             patients treated     2            0      2  4.48031120
+188                     anti tat     2            0      2  7.78967248
+189         retroviral treatment     2            0      2  4.12416751
+190         treatment strategies     2            0      2  3.91191299
+191         infected individuals     2            0      2  3.77292591
+192                 patients cmv     2            0      2  3.89208445
+193             therapy children     2            0      2  3.45351233
+194          diagnosis treatment     2            0      2  3.87263297
+195         disease transmission     2            0      2  3.44363783
+196            human herpesvirus     2            0      2  5.03140574
+197        communicable diseases     3            0      2  7.35439354
+198                1 replication     2            0      2  4.35132509
+199                human central     2            0      2  3.73124296
+200            infection central     2            0      2  3.73124296
+201        treatment periodontal     2            0      2  5.01118520
+202                    1 strains     2            0      2  4.01463249
+203                   viral load     2            0      2  7.51458175
+204          methadone treatment     2            0      2  3.67174210
+205                    aids 2001     2            0      2  3.93151680
+206                    1 derived     2            0      2  3.56220650
+207                  living aids     2            0      2  4.10602109
+208                   risk women     2            0      2  3.20103569
+209               health related     2            0      2  3.18393212
+210               injecting drug     3            0      2  6.86042897
+211        hospitalized patients     2            0      2  4.68764491
+212                  murine aids     2            0      2  3.76932771
+213                aids epidemic     2            0      2  3.47909032
+214            transmission risk     2            0      2  3.11313115
+215                 hiv positive    18            0      2  6.36044325
+216                residual risk     2            0      2  6.92461240
+217                   women drug     2            0      2  3.12417515
+218                treatment hiv    11            0      2  1.48167668
+219             hiv transmission     7            0      2  1.80331921
+220                 simian human     2            0      2  6.26076755
+221              syndromes human     2            0      2  6.26076755
+222                  hiv related     6            0      2  1.90128820
+223                 dengue virus     2            0      2  6.19341741
+224               leukemia virus     2            0      2  6.19341741
+225               vaccinia virus     2            0      2  6.19341741
+226           treatment programs     2            0      2  6.11001736
+227                1 infectivity     2            0      2  5.96120358
+228               aids epidemics     2            0      2  5.87808862
+229               infected women     2            0      2  2.61283024
+230                     anti hiv     4            0      2  2.23646847
+231                  lesions hiv     3            0      2  3.59237186
+232                       tb hiv     3            0      2  3.59237186
+233               hiv prevention     4            0      2  2.18750565
+234                  prevent hiv     3            0      2  2.74461088
+235                  hiv vaccine     6            0      2  1.65673404
+236                human disease     2            0      2  2.46249118
+237             gondii infection     2            0      2  5.55218409
+238                 hiv vaccines     3            0      2  2.69581269
+239              infection human     3            0      2  2.03519305
+240                 aids patient     2            0      2  2.44078869
+241                 hiv protease     4            0      2  2.06210995
+242               patients human     3            0      2  1.99433971
+243                  aids africa     2            0      2  2.37804709
+244             tuberculosis hiv     6            0      2  1.55505200
+245                 patients hiv     9            0      2  1.21273067
+246                      virus 1     3            0      2  1.90477268
+247     antiretroviral treatment     2            0      2  2.25922461
+248               resistance hiv     3            0      2  2.12487658
+249                   cancer hiv     2            0      2  3.25230250
+250                modelling hiv     2            0      2  3.25230250
+251                aids patients     4            0      2  1.57772068
+252               hiv prevalence     3            0      2  2.07607629
+253               1 transmission     2            0      2  2.10597758
+254       treatment tuberculosis     2            0      2  2.09673047
+255               hiv preventive     2            0      2  3.20366641
+256                hiv screening     2            0      2  3.20366641
+257                   living hiv     2            0      2  2.74124534
+258           manifestations hiv     2            0      2  2.74124534
+259             significance hiv     2            0      2  2.74124534
+260               hiv infections     5            0      2  1.43333084
+261                     hiv risk     5            0      2  1.43333084
+262                economics hiv     2            0      2  4.35114627
+263                 syphilis hiv     2            0      2  4.35114627
+264               treatment drug     2            0      2  1.86840779
+265               management hiv     3            0      2  1.74469139
+266                 hiv negative     2            0      2  4.30251088
+267             hiv seropositive     2            0      2  4.30251088
+268                responses hiv     2            0      2  2.15299544
+269                  virus human     2            0      2  1.80885390
+270               infections hiv     4            0      2  1.44592246
+271               hiv strategies     2            0      2  2.10435725
+272               infection aids     3            0      2  1.48051053
+273               virus infected     2            0      2  1.71999851
+274                 immunity hiv     2            0      2  1.95209305
+275                patients aids     3            0      2  1.43965412
+276                 hiv epidemic     2            0      2  1.90345416
+277                     hiv oral     2            0      2  1.73616763
+278               prevention hiv     3            0      2  1.39236532
+279                  effects hiv     2            0      2  1.64147457
+280                  factors hiv     3            0      2  1.25375057
+281                 children hiv     2            0      2  1.51607957
+282                        hiv 2     2            0      2  1.46743858
+283             epidemiology hiv     2            0      2  1.40462202
+284               aids treatment     2            0      2  1.21259693
+285                  hiv disease     3            0      2  1.02731412
+286                 diseases hiv     2            0      2  0.98060481
+287                     risk hiv     3            0      2  0.75358683
+288                  hiv patient     2            0      2  0.86503529
+289                  vaccine hiv     2            0      2  0.68317728
+290                     drug hiv     3            0      2  0.57337391
+291                 infected hiv     4            0      2  0.42481058
+292                hiv treatment     3            0      2 -0.00421991
+293                    virus hiv     2            0      2 -0.10127364
+294                 hiv patients     3            0      2 -0.29347374
+295                     aids hiv     2            0      2 -0.50772982
+               z
+1   13.399095043
+2   12.763895710
+3   12.699111992
+4   12.050854377
+5   11.958880430
+6   10.921787702
+7   10.905739769
+8   10.369452271
+9   10.065000296
+10  10.029254008
+11  10.023200134
+12   9.641253645
+13   9.345336091
+14   9.181998014
+15   8.774088809
+16   8.498164903
+17   8.478266777
+18   8.473902405
+19   8.340197353
+20   8.331586433
+21   8.291651452
+22   8.257789052
+23   8.211839390
+24   8.195217696
+25   8.129494433
+26   8.104913275
+27   8.060052280
+28   8.030067002
+29   7.998450583
+30   7.811809594
+31   7.785718040
+32   7.749727620
+33   7.749535540
+34   7.701133287
+35   7.650060080
+36   7.632972257
+37   7.622849581
+38   7.594277483
+39   7.577120119
+40   7.502125966
+41   7.393245596
+42   7.329949253
+43   7.316375942
+44   7.258963658
+45   7.244958582
+46   7.213500817
+47   7.213306766
+48   7.213306766
+49   7.173596090
+50   7.173596090
+51   7.131865463
+52   7.117174833
+53   6.918225498
+54   6.916695605
+55   6.898259022
+56   6.889711358
+57   6.860811949
+58   6.860236298
+59   6.851653475
+60   6.851653475
+61   6.844931355
+62   6.832212934
+63   6.813574003
+64   6.791020673
+65   6.788464347
+66   6.788464347
+67   6.766833009
+68   6.717499433
+69   6.716008696
+70   6.704301988
+71   6.704295123
+72   6.684517199
+73   6.660008919
+74   6.627889094
+75   6.612720299
+76   6.566697452
+77   6.566697452
+78   6.566697452
+79   6.561617250
+80   6.552071902
+81   6.507919468
+82   6.484981704
+83   6.484981704
+84   6.484981704
+85   6.484981704
+86   6.439568664
+87   6.433321465
+88   6.417724387
+89   6.414999636
+90   6.390193421
+91   6.357692751
+92   6.357692751
+93   6.357692751
+94   6.357692751
+95   6.323491719
+96   6.250022035
+97   6.232411090
+98   6.232411090
+99   6.214764320
+100  6.171162963
+101  6.121945799
+102  6.050579505
+103  6.015479887
+104  5.997495230
+105  5.965211440
+106  5.962937518
+107  5.962937518
+108  5.962433425
+109  5.915348905
+110  5.893077206
+111  5.889723179
+112  5.867432416
+113  5.841055735
+114  5.825405515
+115  5.804237790
+116  5.804237790
+117  5.804237790
+118  5.786470952
+119  5.779856545
+120  5.739059962
+121  5.712757708
+122  5.666248385
+123  5.645304225
+124  5.645304225
+125  5.521230343
+126  5.511004329
+127  5.510562946
+128  5.503057130
+129  5.503057130
+130  5.503057130
+131  5.503057130
+132  5.503057130
+133  5.503057130
+134  5.503057130
+135  5.503057130
+136  5.503057130
+137  5.503057130
+138  5.503057130
+139  5.503057130
+140  5.490677109
+141  5.476659224
+142  5.453993392
+143  5.453734365
+144  5.453734365
+145  5.453734365
+146  5.453734365
+147  5.453734365
+148  5.453734365
+149  5.453734365
+150  5.445700809
+151  5.445700809
+152  5.419691918
+153  5.403748156
+154  5.376596215
+155  5.363114356
+156  5.363114356
+157  5.363114356
+158  5.363114356
+159  5.241155635
+160  5.197387727
+161  5.188397193
+162  5.188397193
+163  5.184656402
+164  5.165318415
+165  5.154291060
+166  5.118094331
+167  5.118094331
+168  5.118094331
+169  5.118094331
+170  5.118094331
+171  5.118094331
+172  5.118094331
+173  5.118094331
+174  5.118094331
+175  5.118094331
+176  5.118094331
+177  5.118094331
+178  5.118094331
+179  5.118094331
+180  5.112417319
+181  5.112065060
+182  5.109091672
+183  5.042677661
+184  4.990619031
+185  4.965777448
+186  4.959335431
+187  4.948770095
+188  4.921229708
+189  4.911874737
+190  4.881340178
+191  4.858329198
+192  4.858052109
+193  4.857095734
+194  4.835166103
+195  4.834927000
+196  4.825661807
+197  4.813157720
+198  4.813123078
+199  4.808046296
+200  4.808046296
+201  4.807152593
+202  4.788056548
+203  4.771554442
+204  4.735914637
+205  4.693422761
+206  4.602116263
+207  4.552018098
+208  4.549302688
+209  4.532365757
+210  4.508190265
+211  4.508026171
+212  4.507274834
+213  4.499792552
+214  4.451381668
+215  4.433774113
+216  4.428799030
+217  4.426355068
+218  4.369280208
+219  4.125056118
+220  4.021908912
+221  4.021908912
+222  3.994771577
+223  3.979861281
+224  3.979861281
+225  3.979861281
+226  3.927650202
+227  3.834134966
+228  3.781729785
+229  3.777533612
+230  3.730536675
+231  3.673696446
+232  3.673696446
+233  3.649685474
+234  3.618655675
+235  3.601497054
+236  3.585415880
+237  3.575252320
+238  3.554813419
+239  3.542364965
+240  3.521195153
+241  3.518138947
+242  3.475558624
+243  3.444725821
+244  3.440975499
+245  3.342338178
+246  3.327237030
+247  3.317681837
+248  3.191081622
+249  3.143401535
+250  3.143401535
+251  3.133452819
+252  3.118359344
+253  3.105538224
+254  3.103673849
+255  3.096624594
+256  3.096624594
+257  3.057510105
+258  3.057510105
+259  3.057510105
+260  2.945479102
+261  2.945479102
+262  2.806419047
+263  2.806419047
+264  2.788329850
+265  2.776661274
+266  2.775142037
+267  2.775142037
+268  2.721074855
+269  2.706302423
+270  2.700526237
+271  2.659941938
+272  2.616536704
+273  2.578955371
+274  2.550850103
+275  2.547580816
+276  2.487631051
+277  2.325228564
+278  2.309015549
+279  2.239669899
+280  2.107020972
+281  2.099459469
+282  2.032412378
+283  1.968629547
+284  1.838495219
+285  1.752973738
+286  1.426134935
+287  1.314285145
+288  1.264234311
+289  1.012692335
+290  1.009909074
+291  0.852952874
+292 -0.007593783
+293 -0.154918274
+294 -0.532278405
+295 -0.783842140</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use tokens_compound to preserve common collocations</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>tokens_preserved <span class="ot">&lt;-</span> <span class="fu">tokens_compound</span>(tokens, <span class="at">pattern =</span> <span class="fu">phrase</span>(collocations<span class="sc">$</span>collocation))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create document feature matrix</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>dfm <span class="ot">&lt;-</span> corpus <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tokens</span>(<span class="at">remove_punct =</span> <span class="cn">TRUE</span>, <span class="at">remove_numbers =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dfm</span>()</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(corpus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Corpus consisting of 633 documents and 4 docvars.
+text1 :
+"management sexually transmitted diseases syndrome approach v..."
+
+text2 :
+"papua guinea drama target risky behaviours"
+
+text3 :
+"fiji aids education youth grassroots"
+
+text4 :
+"papua guinea png correctional service hiv aids std programme"
+
+text5 :
+"metaphors aids asia"
+
+text6 :
+"occupational needlestick injuries"
+
+[ reached max_ndoc ... 627 more documents ]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># meaningful docid names for corpus</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>docid <span class="ot">&lt;-</span> <span class="fu">paste</span>(articles2<span class="sc">$</span>PublicationYear, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>               articles2<span class="sc">$</span>UID, <span class="at">sep =</span> <span class="st">" "</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">docnames</span>(corpus) <span class="ot">&lt;-</span> docid</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(corpus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Corpus consisting of 633 documents and 4 docvars.
+2000 12463035 :
+"management sexually transmitted diseases syndrome approach v..."
+
+2000 12295873 :
+"papua guinea drama target risky behaviours"
+
+2000 12295871 :
+"fiji aids education youth grassroots"
+
+2000 12295870 :
+"papua guinea png correctional service hiv aids std programme"
+
+2000 12174851 :
+"metaphors aids asia"
+
+2000 12017627 :
+"occupational needlestick injuries"
+
+[ reached max_ndoc ... 627 more documents ]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># document variables are stored in corpus and can be subset</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">docvars</span>(corpus))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       UID
+1 12463035
+2 12295873
+3 12295871
+4 12295870
+5 12174851
+6 12017627
+                                                                                                                                                    Title
+1 management of sexually transmitted diseases by the syndrome approach and voluntary hiv screening in a specialized dispensary in antananarivo madagascar
+2                                                                                                 papua new guinea using drama to target risky behaviours
+3                                                                                                       fiji aids education among youth at the grassroots
+4                                                                                    papua new guinea png correctional service hiv aids and std programme
+5                                                                                                                      metaphors of aids from around asia
+6                                                                                                                       occupational needlestick injuries
+  PublicationDate PublicationYear
+1            2000            2000
+2            2000            2000
+3            2000            2000
+4            2000            2000
+5            2000            2000
+6            2000            2000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>corp_recent <span class="ot">&lt;-</span> <span class="fu">corpus_subset</span>(corpus, PublicationYear <span class="sc">&gt;=</span> <span class="dv">2001</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create feature co-occurence matrix</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>fcm <span class="ot">&lt;-</span> <span class="fu">fcm</span>(dfm)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fcm, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Feature co-occurrence matrix of: 10 by 2,026 features.
+             features
+features      management sexually transmitted diseases syndrome approach
+  management           0        1           1        1        1        1
+  sexually             0        0           8        6        1        1
+  transmitted          0        0           0        6        1        1
+  diseases             0        0           0        0        1        1
+  syndrome             0        0           0        0        0        1
+  approach             0        0           0        0        0        0
+  voluntary            0        0           0        0        0        0
+  hiv                  0        0           0        0        0        0
+  screening            0        0           0        0        0        0
+  specialized          0        0           0        0        0        0
+             features
+features      voluntary hiv screening specialized
+  management          1   6         1           1
+  sexually            1   4         1           1
+  transmitted         1   4         1           1
+  diseases            1   7         1           1
+  syndrome            1   2         1           1
+  approach            1   1         1           1
+  voluntary           0   1         1           1
+  hiv                 0  18         3           1
+  screening           0   0         0           1
+  specialized         0   0         0           0
+[ reached max_nfeat ... 2,016 more features ]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># example visualization</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>top <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">topfeatures</span>(dfm, <span class="dv">20</span>))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fcm_top <span class="ot">&lt;-</span> <span class="fu">fcm_select</span>(fcm, <span class="at">pattern =</span> top)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">textplot_network</span>(fcm_top, <span class="at">min_freq =</span> <span class="fl">0.1</span>, <span class="at">edge_alpha =</span> <span class="fl">0.8</span>, <span class="at">edge_size =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="clean_demo_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
