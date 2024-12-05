@@ -1,0 +1,83 @@
+---
+title: "clean"
+format: html
+editor: visual
+---
+
+### Packages
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(tidytext)
+```
+
+### stop words and common words to exclude
+
+```{r}
+# stop words
+data(stop_words)
+table(stop_words$lexicon)
+
+# define custom stop words
+hiv_words <- data.frame(word = c("human", "immunodeficiency", "virus", "hiv", "aids", "acquired", "immunodeficiency", "syndrome", "disease", "diseases", "study", "trial", "randomized", "control", "patient", "review"))
+```
+
+### cleaning function 
+
+```{r}
+combine_all_articles <- function(file_path_template, years, custom_stop_words = NULL) {
+  # file_path_template: Template for file paths
+  # years: A vector of years
+  # custom_stop_words: Data frame of additional stop words to remove
+  
+  # Load default stop words
+  data(stop_words)
+  
+  # Combine default and custom stop words
+  if (!is.null(custom_stop_words)) {
+    stop_words <- bind_rows(stop_words, custom_stop_words)
+  }
+  
+  combined_articles <- data.frame()  # Initialize an empty data frame
+  
+  for (year in years) {
+    # Generate the file path for the current year
+    file_path <- gsub("YEAR", year, file_path_template)
+    
+    if (file.exists(file_path)) {
+      # Read the CSV file
+      articles <- read.csv(file_path)
+      
+      # Ensure the required column exists
+      if ("Title" %in% colnames(articles)) {
+        # Tokenize and clean titles
+        articles_clean <- articles %>%
+          unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
+          anti_join(stop_words, by = "word") %>%
+          mutate(word = str_replace(word, "[0-9]+", "")) %>%
+          filter(word != "") %>%
+          mutate(Year = year)  # Add year column
+        
+        # Combine results
+        combined_articles <- bind_rows(combined_articles, articles_clean)
+      } else {
+        warning(sprintf("Missing 'Title' column in file for year %s: %s", year, file_path))
+      }
+    } else {
+      warning(sprintf("File for year %s not found: %s", year, file_path))
+    }
+  }
+  
+  return(combined_articles)
+}
+```
+
+### example
+
+```{r}
+all_articles <- combine_all_articles(file_path_template = "data/pubmed_hiv_articles_YEAR_YEAR.csv", 
+                           years = 2014:2024,
+                           custom_stop_words = hiv_words
+                           )
+```
