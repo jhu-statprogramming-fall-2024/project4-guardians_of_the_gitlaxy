@@ -10,6 +10,8 @@ editor: visual
 library(tidyverse)
 library(stringr)
 library(tidytext)
+library(textstem)
+library(stopwords)
 ```
 
 ### stop words and common words to exclude
@@ -57,7 +59,8 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
           anti_join(stop_words, by = "word") %>%
           mutate(word = str_replace(word, "[0-9]+", "")) %>%
           filter(word != "") %>%
-          mutate(Year = year)  # Add year column
+          mutate(Year = year, # Add year column
+                 word = lemmatize_words(word)) # Lemmetize words
         
         # Combine results
         combined_articles <- bind_rows(combined_articles, articles_clean)
