@@ -1,0 +1,154 @@
+---
+title: "HIV Articles Title Keyword Analysis"
+format: html
+---
+``` {r}
+library(tidyverse)
+
+readRDS("all_articles.rds")
+```
+
+## Figure 1: Top 15 Words in Titles of HIV Research Articles, 2014-2024
+```{r}
+all_articles %>%
+    group_by(word) %>%
+    summarize(count = n()) %>% #count is the number of times the word/phrase appears
+    arrange(desc(count)) %>% #sort in descending order by count
+    slice_head(n=15) %>% #keep only top 15 words/phrases
+ggplot(aes(x=reorder(word, count), y=count, group=1)) +
+geom_col() +
+coord_flip() +
+labs(title = "Top 15 Words in Titles of HIV Research Articles, 2014-2024",
+    subtitle = "Antiretroviral, risk, and woman were the most common words used",
+    x = "Word",
+    y = "Number of mentions") +
+theme_bw() +
+theme(text = element_text(size = 14))
+```
+
+
+## Calculate Proportion of HIV Articles Mentioning Keywords in Title, 2014-2024
+``` {r}
+target_words <- c("antiretroviral", "screen", "prep", "prophylaxis", "tuberculosis", "hepatitis", "covid", "cancer", "woman", "adolescent", "child", "man", "equity")
+
+line_graph <- all_articles %>%
+  filter(word %in% target_words) %>%
+  group_by(Year, word) %>%
+  summarise(publications = n_distinct(UID), .groups = "drop") %>%
+  left_join(
+    all_articles %>%
+      group_by(Year) %>%
+      summarise(total_publications = n_distinct(UID)),
+    by = "Year"
+  ) %>%
+  mutate(proportion = publications / total_publications)
+```
+
+## Figure 2: Populations Studied in HIV Articles by Age/Gender Over Time, 2014-2024
+``` {r}
+line_graph %>%
+filter(word == "woman" | word == "man" | word == "adolescent" | word == "child") %>%
+ggplot(aes(x=Year, y=proportion, group=reorder(word, -proportion), color=reorder(word, -proportion))) +
+geom_point() + geom_line() +
+labs(title = "Proportion of HIV Articles Mentioning Women, Men, Adolescents, and Children, 2014-2024",
+    subtitle = "Proportion of articles about women and adolescents increased, while articles about children with HIV decreased",
+    x = "Year",
+    y = "Proportion of Articles",
+    color = "Population") +
+theme_bw() +
+theme(text = element_text(size = 14))
+```
+
+## Figure 3: Interventions for HIV Studied Over Time, 2014-2024
+``` {r}
+line_graph %>%
+filter(word == "antiretroviral" | word == "prophylaxis" | word == "screen" | word == "prep") %>%
+ggplot(aes(x=Year, y=proportion, group=reorder(word, -proportion), color=reorder(word, -proportion))) +
+geom_point() + geom_line() +
+labs(title = "Proportion of HIV Articles Mentioning Specific Interventions, 2014-2024",
+    subtitle = "Antiretroviral mentions declined over time, while mentions of prophylaxis, PrEP, and screening increased",
+    x = "Year",
+    y = "Proportion of Articles",
+    color = "Intervention") +
+theme_bw() +
+theme(text = element_text(size = 14))
+```
+
+
+## Figure 4: Comorbidities With HIV Studied Over Time, 2014-2024
+``` {r}
+line_graph %>%
+filter(word == "tuberculosis" | word == "hepatitis" | word == "covid" | word == "cancer") %>%
+ggplot(aes(x=Year, y=proportion, group=reorder(word, -proportion), color=reorder(word, -proportion))) +
+geom_point() + geom_line() +
+labs(title = "Proportion of HIV Articles Mentioning Comorbid Conditions, 2014-2024",
+    subtitle = "COVID mentions spiked in 2022 then dropped, TB stayed constatnt while hepatitis declined and cancer increased",
+    x = "Year",
+    y = "Proportion of Articles",
+    color = "Comorbidity") +
+theme_bw() +
+theme(text = element_text(size = 14))
+```
+
+## Figure 5: Equity as a Theme in HIV Articles Over Time, 2014-2024
+``` {r}
+line_graph %>%
+filter(word == "equity") %>%
+ggplot(aes(x=Year, y=proportion, group=1)) +
+geom_point() + geom_line() +
+labs(title = "Proportion of HIV Articles Mentioning Equity, 2014-2024",
+    subtitle = "Mentions of equity increased over time, spiking after 2020",
+    x = "Year",
+    y = "Proportion of Articles") +
+theme_bw() +
+theme(text = element_text(size = 14))
+```
+
+
+
+
+
+
+# OLD - NOT USING:
+
+## Figure 2: Proportion of HIV Articles Mentioning Antiretroviral in Title, 2014-2024
+``` {r}
+all_articles %>%
+    group_by(Year, UID) %>%
+    summarize(words_per_article = n(), #number of words per article
+                keyword = ifelse(grepl("antiretroviral", word, ignore.case = TRUE), 1, 0)) %>% #binary indicator of whether the article contains keyword
+    group_by(Year) %>%
+    summarize(num_articles = n(), #number of articles per year 
+                num_articles_kw = sum(keyword)) %>% #number of articles mentioning keyword by year
+    mutate(prop_kw = num_articles_kw/num_articles) %>% #proportion of articles mentioning keyword by year
+ggplot(aes(x=Year, y=prop_kw)) +
+geom_col() +
+labs(title = "Proportion of HIV Articles Mentioning Antiretroviral in Title, 2014-2024",
+    subtitle = "Mentions of Antiretroviral Decreased in the Last 10 Years",
+    x = "Year",
+    y = "Proportion of Articles") +
+theme_bw() +
+theme(text = element_text(size = 14))
+
+```
+
+## Figure 3: Proportion of HIV Articles Mentioning Equity in Title, 2014-2024
+``` {r}
+all_articles %>%
+    group_by(Year, UID) %>%
+    summarize(words_per_article = n(), #number of words per article
+                keyword = ifelse(grepl("equity", word, ignore.case = TRUE), 1, 0)) %>% #binary indicator of whether the article contains keyword
+    group_by(Year) %>%
+    summarize(num_articles = n(), #number of articles per year 
+                num_articles_kw = sum(keyword)) %>% #number of articles mentioning keyword by year
+    mutate(prop_kw = num_articles_kw/num_articles) %>% #proportion of articles mentioning keyword by year
+ggplot(aes(x=Year, y=prop_kw)) +
+geom_col() +
+labs(title = "Proportion of HIV Articles Mentioning Equity in Title, 2014-2024",
+    subtitle = "Mentions of Equity Increased in the Last 10 Years",
+    x = "Year",
+    y = "Proportion of Articles") +
+theme_bw() +
+theme(text = element_text(size = 14))
+
+```

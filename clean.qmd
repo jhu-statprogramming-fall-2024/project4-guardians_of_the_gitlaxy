@@ -22,10 +22,10 @@ data(stop_words)
 table(stop_words$lexicon)
 
 # define custom stop words
-hiv_words <- data.frame(word = c("human", "immunodeficiency", "virus", "hiv", "aids", "acquired", "immunodeficiency", "syndrome", "disease", "diseases", "study", "trial", "randomized", "control", "patient", "review"))
+hiv_words <- data.frame(word = c("human", "immunodeficiency", "virus", "hiv", "aids", "aid", "acquired", "immunodeficiency", "syndrome", "disease", "diseases", "study", "trial", "randomized", "control", "patient", "review", "infection", "health", "live", "care", "infect", "people", "analysis", "factor", "base", "cohort", "clinical", "outcome", "test", "south", "positive", "systematic", "model", "impact", "associate", "effect", "cross", "viral", "cd", "population", "report", "epidemic", "treatment", "prevention", "detection", "vaccine"))
 ```
 
-### cleaning function 
+### cleaning function
 
 ```{r}
 combine_all_articles <- function(file_path_template, years, custom_stop_words = NULL) {
@@ -56,11 +56,11 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
         # Tokenize and clean titles
         articles_clean <- articles %>%
           unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
+          mutate(Year = year, # Add year column
+                 word = lemmatize_words(word)) %>% # Lemmetize words
           anti_join(stop_words, by = "word") %>%
           mutate(word = str_replace(word, "[0-9]+", "")) %>%
-          filter(word != "") %>%
-          mutate(Year = year, # Add year column
-                 word = lemmatize_words(word)) # Lemmetize words
+          filter(word != "")
         
         # Combine results
         combined_articles <- bind_rows(combined_articles, articles_clean)
