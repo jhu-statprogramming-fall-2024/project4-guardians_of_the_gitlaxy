@@ -111,7 +111,7 @@ for (year in 1990:1990) {
 final_df <- do.call(rbind, all_articles)
 knitr::kable(head(final_df))
 
-write.csv(final_df, "data/full_pubmed_hiv_articles.csv", row.names = FALSE)
+write.csv(final_df, "data/demo_1990_hiv_articles.csv", row.names = FALSE)
 
 cat("Data scraping complete. Saved results to 'data/full_pubmed_hiv_articles.csv'\n")
 
@@ -121,8 +121,3 @@ cat("Data scraping complete. Saved results to 'data/full_pubmed_hiv_articles.csv
 ::: callout-note
 one thing I am noticing is that the apostrophes are replaced with spaces, i.e. ' ', which might not be good down the line. However, using the sorttitle instead of title could be better as we don't have to do as much string transformation. Nevertheless, apostrophized words shoudn't be too important tbh.
 :::
-
-```{r}
-
-
-```
