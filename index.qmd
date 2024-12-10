@@ -1,0 +1,29 @@
+---
+title: "Topics in HIV Research"
+format: 
+  html:
+    toc: true
+    toc-depth: 2
+editor: visual
+---
+
+# Welcome to Guardians of the Gitlaxy
+
+We are Thanh Doan, Ilina Odouard, Hridika Shah, and Jonathan Ye.
+
+![](images/thanh.png){width=20%}
+![](images/ilina.png){width=20%}
+![](images/hridika.png){width=20%}
+![](images/jonathan.png){width=20%}
+
+This website presents insights from HIV-related research articles retrieved from PubMed (2014–2024). Explore the sections below:
+
+-   **Results:** View trends, visualizations, and key findings.
+-   **Data Collection Demo:** Learn how data was retrieved using the PubMed API.
+-   **Data Cleaning:** Discover the methods used to clean and prepare the data.
+
+**For those interested in learning about our findings**, please click on **Results**!
+
+**For those interested in learning about our technical process**, please click on **Data Collection Demo** and **Data Cleaning**!
+
+Thank you for visiting our website, and enjoy exploring!
