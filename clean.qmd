@@ -4,17 +4,17 @@ format: html
 editor: visual
 ---
 
-### Packages
+### Load packages
 
 ```{r}
 library(tidyverse)
-library(stringr)
-library(tidytext)
-library(textstem)
-library(stopwords)
+library(stringr) # clean character strings
+library(tidytext) # tokenize text
+library(textstem) # lemmatize words
+library(stopwords) # stop words
 ```
 
-### stop words and common words to exclude
+### Define stop words and custom stop words to exclude
 
 ```{r}
 # stop words
@@ -25,18 +25,18 @@ table(stop_words$lexicon)
 hiv_words <- data.frame(word = c("human", "immunodeficiency", "virus", "hiv", "aids", "aid", "acquired", "immunodeficiency", "syndrome", "disease", "diseases", "study", "trial", "randomized", "control", "patient", "review", "infection", "health", "live", "care", "infect", "people", "analysis", "factor", "base", "cohort", "clinical", "outcome", "test", "south", "positive", "systematic", "model", "impact", "associate", "effect", "cross", "viral", "cd", "population", "report", "epidemic", "treatment", "prevention", "detection", "vaccine"))
 ```
 
-### cleaning function
+### A function to combine csv files and clean data for the specified years
 
 ```{r}
 combine_all_articles <- function(file_path_template, years, custom_stop_words = NULL) {
   # file_path_template: Template for file paths
   # years: A vector of years
-  # custom_stop_words: Data frame of additional stop words to remove
+  # custom_stop_words: Data frame of pre-defined custom stop words to remove
   
   # Load default stop words
   data(stop_words)
   
-  # Combine default and custom stop words
+  # Combine default and custom stop words into one data frame
   if (!is.null(custom_stop_words)) {
     stop_words <- bind_rows(stop_words, custom_stop_words)
   }
@@ -53,14 +53,14 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
       
       # Ensure the required column exists
       if ("Title" %in% colnames(articles)) {
-        # Tokenize and clean titles
+        # Tokenize (words) and clean titles
         articles_clean <- articles %>%
           unnest_tokens(word, Title, token = "words", drop = FALSE) %>%
           mutate(Year = year, # Add year column
                  word = lemmatize_words(word)) %>% # Lemmetize words
-          anti_join(stop_words, by = "word") %>%
-          mutate(word = str_replace(word, "[0-9]+", "")) %>%
-          filter(word != "")
+          anti_join(stop_words, by = "word") %>% # Remove stop words
+          mutate(word = str_replace(word, "[0-9]+", "")) %>% # remove numbers and other characters
+          filter(word != "") # remove empty observation rows
         
         # Combine results
         combined_articles <- bind_rows(combined_articles, articles_clean)
@@ -76,7 +76,7 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
 }
 ```
 
-### example
+### A call for 2014-2024 data set 
 
 ```{r}
 all_articles <- combine_all_articles(file_path_template = "data/pubmed_hiv_articles_YEAR_YEAR.csv", 
@@ -84,3 +84,9 @@ all_articles <- combine_all_articles(file_path_template = "data/pubmed_hiv_artic
                            custom_stop_words = hiv_words
                            )
 ```
+
+### An explanation of our methods
+
+First, we loaded a number of packages into the library, including Tidyverse, Strings, Tidytext, Textstem, and Stopwords. Next, we loaded the stop words data frame and created a custom stop words data frame with words such as human immunodeficiency virus (HIV), disease, study, trial, people, and review. Then, we wrote a function that would combine all the CSV articles and clean the data. The inputs of the function were the general file path template, a vector of years that you aimed to combine the data for, and the custom stop words data frame generated above.
+
+Within the function, the stop words and custom stop words are combined into one data frame. Then the function initializes an empty combined articles data frame. The function uses a *for* statement, for each year within the vector of years specified as the input the function will call the CSV (if the file exists). It will ensure that the ‘title’ column is found within that file, and then clean the data. The data cleaning process involves tokenizing the words in the titles, lemmatizing the words, removing stop words, removing numbers, and finally removing empty observation rows. The last few lines of code in the function bind the cleaned data to the empty data frame initialized earlier, and repeat this process for all the years within the year vector. The function will return a final data frame of all the combined articles for the years specified. We included an example call for 2014 to 2024 as this was the dataset used for our analysis.
