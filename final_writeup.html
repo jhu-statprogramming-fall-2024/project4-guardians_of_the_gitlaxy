@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Guardians of the Gitlaxy: Final Project Writeup</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="final_writeup_files/libs/clipboard/clipboard.min.js"></script>
+<script src="final_writeup_files/libs/quarto-html/quarto.js"></script>
+<script src="final_writeup_files/libs/quarto-html/popper.min.js"></script>
+<script src="final_writeup_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="final_writeup_files/libs/quarto-html/anchor.min.js"></script>
+<link href="final_writeup_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="final_writeup_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="final_writeup_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="final_writeup_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="final_writeup_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Guardians of the Gitlaxy: Final Project Writeup</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="topics-and-trends-in-hiv-research-from-2014-2024" class="level1">
+<h1>Topics and Trends in HIV Research from 2014-2024</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Our project addresses the question: How have the major topics in HIV research—including clinical advancements, public health programming, and policy interventions—evolved over time from 2014 to 2024, and what patterns or shifts can be identified across these areas? This question is important as it sheds light on areas where significant progress has been made and where gaps remain, guiding future research priorities, resource allocation, and public health strategies.</p>
+<p>Goals and Accomplishments: Our initial goal was to analyze trends in HIV research topics using PubMed metadata. Specifically, we aimed to identify shifts in the prevalence of keywords across research articles, visualize these trends over time, and provide insights into the evolution of HIV research focus areas. Along the way, we successfully:</p>
+<ul>
+<li><p>Extracted publication metadata (titles, dates, and UIDs) from PubMed using the rentrez API.</p></li>
+<li><p>Cleaned and processed the data, including removing stop words, lemmatizing terms, and tokenizing titles to capture high-frequency keywords.</p></li>
+<li><p>Conducted trend analyses over the study period (2014–2024) and visualized the results on an interactive Quarto website.</p></li>
+<li><p>Published detailed documentation to ensure reproducibility and usability on our GitHub repository.</p></li>
+</ul>
+<p>Prior Work in the Field: Previous research includes Fajardo-Ortiz et al., who analyzed the evolution of biomedical knowledge in HIV research using text mining and network analysis. Additionally, Merson’s work outlined a timeline of key HIV research milestones from 1981 to 2006. However, no prior study has examined broader trends in HIV research topics, especially in areas like public health programming and policy interventions, making our work unique in its scope and focus.</p>
+<p>Finally, we combined functional programming and natural language processing paradigms:</p>
+<ul>
+<li><p>Functional programming ensured efficient, reusable, generalizable functions for tasks like accessing article titles, keyword extraction and data transformations.</p></li>
+<li><p>NLP techniques, implemented via tidytext in R, enabled tokenization, lemmatization, and keyword analysis, providing deeper insights into textual patterns.</p></li>
+</ul>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<p>Technical Challenges: Throughout the project, we faced several challenges, including managing PubMed API rate limits and restrictions on batch size, which necessitated an efficient data retrieval pipeline. Data cleaning posed its own difficulties, as we had to carefully design processes to remove irrelevant terms, lemmatize words for consistency, and handle a large volume of data spanning an entire decade. Additionally, transforming the raw metadata into a meaningful format for analysis required considerate amounts of computational effort and precision.</p>
+<p>Data and Figures: Our dataset comprised CSV files from 2014–2024, each containing 5,000–10,000 rows (one row per article) with columns for ID, title, and publication year. After processing, the combined dataset included over 930,000 rows, with tokenized words added as a fourth column. Figures on the website, such as keyword trend graphs, population focus analyses, and intervention themes, are complemented with clear legends and titles, making them accessible to general and technical audiences alike.</p>
+<section id="data-collection" class="level3">
+<h3 class="anchored" data-anchor-id="data-collection">Data Collection</h3>
+<p>Here is a quick demo of how we collected the pubmed articles using the <code>rentrez</code> api! Since this process took a while to run, we will only demonstrate it for one year.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading packages, and setting the api key</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rentrez)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(progressr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set_entrez_key</span>(<span class="st">"c14a6209a64f2dd809205225f00d76053007"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># our tailored search query:</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">'("HIV" OR "AIDS") AND </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">("epidemic" OR "treatment" OR "prevention" OR "detection" OR "vaccine" OR </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">"mathematical modeling" OR "prognosis" OR "case study" OR "healthcare" OR </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="st">"public health" OR "immunology" OR "infectious diseases") </span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">NOT ("conference" OR "summit" OR "legal" OR "audiology" OR "non-HIV infections" </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">OR "qi gong" OR "hearing" OR "strategy" OR "debate" OR "response" OR "comments" OR "editorial")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, you can see our tailored query, which was developed to catch any potentially irrelevant articles from the start. For example, we noticed some articles mentioning “hearing aids” which has no relation to AIDS/HIV, which motivated our exclusion of audiology.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define year ranges</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>start_year <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>end_year <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#end_year &lt;- 2002</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define proper 5-year intervals (now 1 year intervals)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>year_ranges <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq</span>(start_year, end_year, <span class="at">by =</span> <span class="dv">1</span>), <span class="cf">function</span>(year) {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  range_end <span class="ot">&lt;-</span> <span class="fu">min</span>(year, end_year) <span class="co"># Ensure we don't exceed end_year</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(year, range_end))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to fetch and save articles for a year range</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fetch_and_save_articles <span class="ot">&lt;-</span> <span class="cf">function</span>(range_start, range_end) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Processing range: %d-%d</span><span class="sc">\n</span><span class="st">"</span>, range_start, range_end))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Perform the PubMed search</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  search_results <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">entrez_search</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">db =</span> <span class="st">"pubmed"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">term =</span> query,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">mindate =</span> <span class="fu">as.character</span>(range_start),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxdate =</span> <span class="fu">as.character</span>(range_end),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">use_history =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Error during search for range %d-%d: %s"</span>, range_start, range_end, e<span class="sc">$</span>message))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(search_results) <span class="sc">||</span> search_results<span class="sc">$</span>count <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"No results found for range %d-%d."</span>, range_start, range_end))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Found %d results for range %d-%d</span><span class="sc">\n</span><span class="st">"</span>, search_results<span class="sc">$</span>count, range_start, range_end))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fetch article summaries in batches</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  batch_size <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  range_articles <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (start_idx <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">0</span>, search_results<span class="sc">$</span>count <span class="sc">-</span> <span class="dv">1</span>, <span class="at">by =</span> batch_size)) {</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Sys.sleep</span>(<span class="fl">0.34</span>)  <span class="co"># Rate limit: 3 requests per second</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    summary_data <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">entrez_summary</span>(</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">db =</span> <span class="st">"pubmed"</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">web_history =</span> search_results<span class="sc">$</span>web_history,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">retmax =</span> batch_size,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">retstart =</span> start_idx</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Error during summary fetch for batch starting at %d: %s"</span>, start_idx, e<span class="sc">$</span>message))</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">#str(summary_data)</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(summary_data)) <span class="cf">next</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract and validate data</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    articles <span class="ot">&lt;-</span> <span class="fu">lapply</span>(summary_data, <span class="cf">function</span>(x) {</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.atomic</span>(x)) {</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">"Skipping atomic vector in summary data."</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(x<span class="sc">$</span>uid) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(x<span class="sc">$</span>sorttitle) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(x<span class="sc">$</span>pubdate)) {</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>        pub_year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">".*?([0-9]{4}).*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, x<span class="sc">$</span>pubdate))</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>          <span class="at">UID =</span> x<span class="sc">$</span>uid,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>          <span class="at">Title =</span> x<span class="sc">$</span>sorttitle,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>          <span class="at">PublicationDate =</span> x<span class="sc">$</span>pubdate,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>          <span class="at">PublicationYear =</span> pub_year</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>        ))</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NULL</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter out NULL entries</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    articles <span class="ot">&lt;-</span> <span class="fu">Filter</span>(<span class="fu">Negate</span>(is.null), articles)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine into a data frame or data table</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(articles) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>      batch_df <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">rbindlist</span>(articles, <span class="at">use.names =</span> <span class="cn">TRUE</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>      range_articles[[<span class="fu">as.character</span>(start_idx)]] <span class="ot">&lt;-</span> batch_df</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"No valid articles in batch starting at %d"</span>, start_idx))</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(range_articles) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    range_df <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">rbindlist</span>(range_articles, <span class="at">use.names =</span> <span class="cn">TRUE</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    range_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(range_df)  <span class="co"># Deduplicate</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"there are "</span>, <span class="fu">nrow</span>(range_df), <span class="st">"articles for this range</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    file_name <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"data/sample_pubmed_hiv_articles_%d_%d.csv"</span>, range_start, range_end)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    data.table<span class="sc">::</span><span class="fu">fwrite</span>(range_df, file_name)  <span class="co"># Write to CSV</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Saved articles for range %d-%d to %s</span><span class="sc">\n</span><span class="st">"</span>, range_start, range_end, file_name))</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"No articles to save for range %d-%d."</span>, range_start, range_end))</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is our function that collects articles given our query and any time range. It also contains several checks for errors, and writing this function allowed us to easily test our process for variable time windows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#for (range in year_ranges) {</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    cat(sprintf("Processing range %d-%d", range[1], range[2]))</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    fetch_and_save_articles(range[1], range[2])</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'this is what our raw data format looks like!'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "this is what our raw data format looks like!"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(<span class="fu">read.csv</span>(<span class="st">'data/sample_pubmed_hiv_articles_2000_2000.csv'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 76%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">UID</th>
+<th style="text-align: left;">Title</th>
+<th style="text-align: left;">PublicationDate</th>
+<th style="text-align: right;">PublicationYear</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">11132073</td>
+<td style="text-align: left;">prevalence of human immunodeficiency virus hiv antibody in critically ill emergency patients in gij n spain</td>
+<td style="text-align: left;">2000 Jun</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11131740</td>
+<td style="text-align: left;">nutritional factors and vertical transmission of hiv 1 epidemiology and potential mechanisms</td>
+<td style="text-align: left;">2000 Nov</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11131739</td>
+<td style="text-align: left;">role of antiretrovirals and drug resistance in vertical transmission of hiv 1 infection</td>
+<td style="text-align: left;">2000 Nov</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11131738</td>
+<td style="text-align: left;">genital tract infections and perinatal transmission of hiv</td>
+<td style="text-align: left;">2000 Nov</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11131737</td>
+<td style="text-align: left;">subclinical chorioamnionitis as a targetable risk factor for vertical transmission of hiv 1</td>
+<td style="text-align: left;">2000 Nov</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11131734</td>
+<td style="text-align: left;">cost effectiveness of a single dose nevirapine regimen to mother and infant to reduce vertical hiv 1 transmission in sub saharan africa</td>
+<td style="text-align: left;">2000 Nov</td>
+<td style="text-align: right;">2000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load relevant packages, clear existing workspace</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::between()     masks data.table::between()
+✖ dplyr::filter()      masks stats::filter()
+✖ dplyr::first()       masks data.table::first()
+✖ lubridate::hour()    masks data.table::hour()
+✖ lubridate::isoweek() masks data.table::isoweek()
+✖ dplyr::lag()         masks stats::lag()
+✖ dplyr::last()        masks data.table::last()
+✖ lubridate::mday()    masks data.table::mday()
+✖ lubridate::minute()  masks data.table::minute()
+✖ lubridate::month()   masks data.table::month()
+✖ lubridate::quarter() masks data.table::quarter()
+✖ lubridate::second()  masks data.table::second()
+✖ purrr::transpose()   masks data.table::transpose()
+✖ lubridate::wday()    masks data.table::wday()
+✖ lubridate::week()    masks data.table::week()
+✖ lubridate::yday()    masks data.table::yday()
+✖ lubridate::year()    masks data.table::year()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr) <span class="co"># clean character strings</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext) <span class="co"># tokenize text</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textstem) <span class="co"># lemmatize words</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: koRpus.lang.en
+Loading required package: koRpus
+Loading required package: sylly
+For information on available language packages for 'koRpus', run
+
+  available.koRpus.lang()
+
+and see ?install.koRpus.lang()
+
+
+Attaching package: 'koRpus'
+
+The following object is masked from 'package:readr':
+
+    tokenize</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stopwords) <span class="co"># stop words</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Define stop words and custom stop words to exclude</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stop words</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(stop_words)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(stop_words<span class="sc">$</span>lexicon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    onix    SMART snowball 
+     404      571      174 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define custom stop words</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>hiv_words <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">word =</span> <span class="fu">c</span>(<span class="st">"human"</span>, <span class="st">"immunodeficiency"</span>, <span class="st">"virus"</span>, <span class="st">"hiv"</span>, <span class="st">"aids"</span>, <span class="st">"aid"</span>, <span class="st">"acquired"</span>, <span class="st">"immunodeficiency"</span>, <span class="st">"syndrome"</span>, <span class="st">"disease"</span>, <span class="st">"diseases"</span>, <span class="st">"study"</span>, <span class="st">"trial"</span>, <span class="st">"randomized"</span>, <span class="st">"control"</span>, <span class="st">"patient"</span>, <span class="st">"review"</span>, <span class="st">"infection"</span>, <span class="st">"health"</span>, <span class="st">"live"</span>, <span class="st">"care"</span>, <span class="st">"infect"</span>, <span class="st">"people"</span>, <span class="st">"analysis"</span>, <span class="st">"factor"</span>, <span class="st">"base"</span>, <span class="st">"cohort"</span>, <span class="st">"clinical"</span>, <span class="st">"outcome"</span>, <span class="st">"test"</span>, <span class="st">"south"</span>, <span class="st">"positive"</span>, <span class="st">"systematic"</span>, <span class="st">"model"</span>, <span class="st">"impact"</span>, <span class="st">"associate"</span>, <span class="st">"effect"</span>, <span class="st">"cross"</span>, <span class="st">"viral"</span>, <span class="st">"cd"</span>, <span class="st">"population"</span>, <span class="st">"report"</span>, <span class="st">"epidemic"</span>, <span class="st">"treatment"</span>, <span class="st">"prevention"</span>, <span class="st">"detection"</span>, <span class="st">"vaccine"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A function to combine csv files and clean data for the specified years</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>combine_all_articles <span class="ot">&lt;-</span> <span class="cf">function</span>(file_path_template, years, <span class="at">custom_stop_words =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># file_path_template: Template for file paths</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># years: A vector of years</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># custom_stop_words: Data frame of pre-defined custom stop words to remove</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Load default stop words</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data</span>(stop_words)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine default and custom stop words into one data frame</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(custom_stop_words)) {</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    stop_words <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(stop_words, custom_stop_words)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  combined_articles <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()  <span class="co"># Initialize an empty data frame</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> years) {</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate the file path for the current year</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    file_path <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"YEAR"</span>, year, file_path_template)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">file.exists</span>(file_path)) {</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Read the CSV file</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>      articles <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(file_path)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Ensure the required column exists</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="st">"Title"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(articles)) {</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tokenize (words) and clean titles</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>        articles_clean <span class="ot">&lt;-</span> articles <span class="sc">%&gt;%</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>          <span class="fu">unnest_tokens</span>(word, Title, <span class="at">token =</span> <span class="st">"words"</span>, <span class="at">drop =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">Year =</span> year, <span class="co"># Add year column</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                 <span class="at">word =</span> <span class="fu">lemmatize_words</span>(word)) <span class="sc">%&gt;%</span> <span class="co"># Lemmetize words</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>          <span class="fu">anti_join</span>(stop_words, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span> <span class="co"># Remove stop words</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">str_replace</span>(word, <span class="st">"[0-9]+"</span>, <span class="st">""</span>)) <span class="sc">%&gt;%</span> <span class="co"># remove numbers and other characters</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(word <span class="sc">!=</span> <span class="st">""</span>) <span class="co"># remove empty observation rows</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine results</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>        combined_articles <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(combined_articles, articles_clean)</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">warning</span>(<span class="fu">sprintf</span>(<span class="st">"Missing 'Title' column in file for year %s: %s"</span>, year, file_path))</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="fu">sprintf</span>(<span class="st">"File for year %s not found: %s"</span>, year, file_path))</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(combined_articles)</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>all_articles <span class="ot">&lt;-</span> <span class="fu">combine_all_articles</span>(<span class="at">file_path_template =</span> <span class="st">"data/pubmed_hiv_articles_YEAR_YEAR.csv"</span>, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">years =</span> <span class="dv">2014</span><span class="sc">:</span><span class="dv">2024</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">custom_stop_words =</span> hiv_words</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                           )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First, we loaded a number of packages into the library, including Tidyverse, Strings, Tidytext, Textstem, and Stopwords. Next, we loaded the stop words data frame and created a custom stop words data frame with words such as human immunodeficiency virus (HIV), disease, study, trial, people, and review. Then, we wrote a function that would combine all the CSV articles and clean the data. The inputs of the function were the general file path template, a vector of years that you aimed to combine the data for, and the custom stop words data frame generated above.</p>
+<p>Within the function, the stop words and custom stop words are combined into one data frame. Then the function initializes an empty combined articles data frame. The function uses a for statement, for each year within the vector of years specified as the input the function will call the CSV (if the file exists). It will ensure that the ‘title’ column is found within that file, and then clean the data. The data cleaning process involves tokenizing the words in the titles, lemmatizing the words, removing stop words, removing numbers, and finally removing empty observation rows. The last few lines of code in the function bind the cleaned data to the empty data frame initialized earlier, and repeat this process for all the years within the year vector. The function will return a final data frame of all the combined articles for the years specified. We included an example call for 2014 to 2024 as this was the dataset used for our analysis.</p>
+</section>
+<section id="data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="data-analysis">Data Analysis</h3>
+<section id="figure-1-top-15-words-in-titles-of-hiv-research-articles-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="figure-1-top-15-words-in-titles-of-hiv-research-articles-2014-2024">Figure 1: Top 15 Words in Titles of HIV Research Articles, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>all_articles <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> <span class="co">#count is the number of times the word/phrase appears</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">%&gt;%</span> <span class="co">#sort in descending order by count</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_head</span>(<span class="at">n=</span><span class="dv">15</span>) <span class="sc">%&gt;%</span> <span class="co">#keep only top 15 words/phrases</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(word, count), <span class="at">y=</span>count, <span class="at">group=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 15 Words in Titles of HIV Research Articles, 2014-2024"</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Antiretroviral, risk, and woman were the most common words used"</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Word"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of mentions"</span>) <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="final_writeup_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="calculate-proportion-of-hiv-articles-mentioning-keywords-in-title-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="calculate-proportion-of-hiv-articles-mentioning-keywords-in-title-2014-2024">Calculate Proportion of HIV Articles Mentioning Keywords in Title, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>target_words <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"antiretroviral"</span>, <span class="st">"screen"</span>, <span class="st">"prep"</span>, <span class="st">"prophylaxis"</span>, <span class="st">"tuberculosis"</span>, <span class="st">"hepatitis"</span>, <span class="st">"covid"</span>, <span class="st">"cancer"</span>, <span class="st">"woman"</span>, <span class="st">"adolescent"</span>, <span class="st">"child"</span>, <span class="st">"man"</span>, <span class="st">"equity"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>line_graph <span class="ot">&lt;-</span> all_articles <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(word <span class="sc">%in%</span> target_words) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year, word) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">publications =</span> <span class="fu">n_distinct</span>(UID), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    all_articles <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">total_publications =</span> <span class="fu">n_distinct</span>(UID)),</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"Year"</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">proportion =</span> publications <span class="sc">/</span> total_publications)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="figure-2-populations-studied-in-hiv-articles-by-agegender-over-time-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="figure-2-populations-studied-in-hiv-articles-by-agegender-over-time-2014-2024">Figure 2: Populations Studied in HIV Articles by Age/Gender Over Time, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>line_graph <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(word <span class="sc">==</span> <span class="st">"woman"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"man"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"adolescent"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"child"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Year, <span class="at">y=</span>proportion, <span class="at">group=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion), <span class="at">color=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion))) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportion of HIV Articles Mentioning Women, Men, Adolescents, and Children, 2014-2024"</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Proportion of articles about women and adolescents increased, while articles about children with HIV decreased"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of Articles"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="final_writeup_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="figure-3-interventions-for-hiv-studied-over-time-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="figure-3-interventions-for-hiv-studied-over-time-2014-2024">Figure 3: Interventions for HIV Studied Over Time, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>line_graph <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(word <span class="sc">==</span> <span class="st">"antiretroviral"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"prophylaxis"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"screen"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"prep"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Year, <span class="at">y=</span>proportion, <span class="at">group=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion), <span class="at">color=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion))) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportion of HIV Articles Mentioning Specific Interventions, 2014-2024"</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Antiretroviral mentions declined over time, while mentions of prophylaxis, PrEP, and screening increased"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of Articles"</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Intervention"</span>) <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="final_writeup_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="figure-4-comorbidities-with-hiv-studied-over-time-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="figure-4-comorbidities-with-hiv-studied-over-time-2014-2024">Figure 4: Comorbidities With HIV Studied Over Time, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>line_graph <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(word <span class="sc">==</span> <span class="st">"tuberculosis"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"hepatitis"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"covid"</span> <span class="sc">|</span> word <span class="sc">==</span> <span class="st">"cancer"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Year, <span class="at">y=</span>proportion, <span class="at">group=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion), <span class="at">color=</span><span class="fu">reorder</span>(word, <span class="sc">-</span>proportion))) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportion of HIV Articles Mentioning Comorbid Conditions, 2014-2024"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"COVID mentions spiked in 2022 then dropped, TB stayed constatnt while hepatitis declined and cancer increased"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of Articles"</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Comorbidity"</span>) <span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="final_writeup_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="figure-5-equity-as-a-theme-in-hiv-articles-over-time-2014-2024" class="level4">
+<h4 class="anchored" data-anchor-id="figure-5-equity-as-a-theme-in-hiv-articles-over-time-2014-2024">Figure 5: Equity as a Theme in HIV Articles Over Time, 2014-2024</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>line_graph <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(word <span class="sc">==</span> <span class="st">"equity"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Year, <span class="at">y=</span>proportion, <span class="at">group=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportion of HIV Articles Mentioning Equity, 2014-2024"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Mentions of equity increased over time, spiking after 2020"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion of Articles"</span>) <span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="final_writeup_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>What We Learned: We gained experience in functional programming and natural language processing (NLP), which were pivotal in handling textual data. It also reinforced the importance of clear documentation and user-friendly interfaces, as our final product needed to cater to both technical and general audiences. Finally, we deepened our understanding of the collaborative and interdisciplinary nature of data-driven research, where computational tools and domain knowledge converge to address complex questions.</p>
+<p>Our final project is linked here:</p>
+<p>Our final data analytic product works as intended, integrating data collection, processing, and visualization. The components combine raw data flowing through cleaning pipelines into visualizations that capture evolving trends in HIV research.</p>
+<p>Our product is designed to be both easy to use and well-documented. As aforementioned, the project’s GitHub repository includes a README.md file summarizing key details about the project, as well as details about the team members and our contact information. We provided clear links to all the necessary code files, ensuring reproducibility. The Quarto website is structured into distinct sections for findings (Results) and technical methods (Data Cleaning and Data Collection Demo), making it accessible to users with varying levels of expertise. Well-labeled figures accompanied by data interpretation further enhance usability, ensuring a seamless user experience.</p>
+<p>Our project addresses a non-trivial challenge: analyzing a vast PubMed dataset spanning a decade while balancing computational efficiency and interpretive depth. The importance of the HIV research field cannot be overstated, as it directly impacts global health and shapes funding priorities. By using NLP to uncover patterns in research topics and combining this with data visualizations on the Quarto website, our work reflects creativity and contributes insights to this critical area of study.</p>
+<section id="works-cited" class="level3">
+<h3 class="anchored" data-anchor-id="works-cited">Works Cited</h3>
+<ol type="1">
+<li><p>Fajardo-Ortiz D, Lopez-Cervantes M, Duran L, et al.&nbsp;The emergence and evolution of the research fronts in HIV/AIDS research. PLoS One. 2017;12(5):e0178293. Published 2017 May 25. doi:10.1371/journal.pone.0178293</p></li>
+<li><p>Merson MH. The HIV–AIDS Pandemic at 25 — The Global Response. N Engl J Med. 2006;354(23):2414-2417. doi:10.1056/NEJMp068074.</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

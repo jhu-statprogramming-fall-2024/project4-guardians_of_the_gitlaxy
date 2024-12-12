@@ -76,7 +76,7 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
 }
 ```
 
-### A call for 2014-2024 data set 
+### A call for 2014-2024 data set
 
 ```{r}
 all_articles <- combine_all_articles(file_path_template = "data/pubmed_hiv_articles_YEAR_YEAR.csv", 
