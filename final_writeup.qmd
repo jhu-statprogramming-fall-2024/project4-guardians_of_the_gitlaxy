@@ -1,6 +1,8 @@
 ---
 title: "Guardians of the Gitlaxy: Final Project Writeup"
-format: html
+format: 
+  html:
+    toc: true
 ---
 
 # Topics and Trends in HIV Research from 2014-2024
