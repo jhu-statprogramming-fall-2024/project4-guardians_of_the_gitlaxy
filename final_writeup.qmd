@@ -371,7 +371,7 @@ theme(text = element_text(size = 14))
 
 What We Learned: We gained experience in functional programming and natural language processing (NLP), which were pivotal in handling textual data. It also reinforced the importance of clear documentation and user-friendly interfaces, as our final product needed to cater to both technical and general audiences. Finally, we deepened our understanding of the collaborative and interdisciplinary nature of data-driven research, where computational tools and domain knowledge converge to address complex questions.
 
-Our final project is linked here: 
+Our final project is linked here: <https://thanhvdoan.quarto.pub/project4-biostat777/>
 
 Our final data analytic product works as intended, integrating data collection, processing, and visualization. The components combine raw data flowing through cleaning pipelines into visualizations that capture evolving trends in HIV research. 
 
