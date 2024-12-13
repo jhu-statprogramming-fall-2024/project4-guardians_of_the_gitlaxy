@@ -81,6 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#topics-and-trends-in-hiv-research-from-2014-2024" id="toc-topics-and-trends-in-hiv-research-from-2014-2024" class="nav-link active" data-scroll-target="#topics-and-trends-in-hiv-research-from-2014-2024">Topics and Trends in HIV Research from 2014-2024</a>
   <ul class="collapse">
+  <li><a href="#team-members" id="toc-team-members" class="nav-link" data-scroll-target="#team-members">Team Members</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
@@ -119,6 +120,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="topics-and-trends-in-hiv-research-from-2014-2024" class="level1">
 <h1>Topics and Trends in HIV Research from 2014-2024</h1>
+<section id="team-members" class="level2">
+<h2 class="anchored" data-anchor-id="team-members">Team Members</h2>
+<p>Thanh Doan (tdoan7 – tdoan7@jh.edu) Ilina Odouard (iodouar1 – iodouar1@jh.edu) Hridika Shah (hshah25 – hshah25@jh.edu) Jonathan Ye (jye41 – jye41@jh.edu)</p>
+</section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Our project addresses the question: How have the major topics in HIV research—including clinical advancements, public health programming, and policy interventions—evolved over time from 2014 to 2024, and what patterns or shifts can be identified across these areas? This question is important as it sheds light on areas where significant progress has been made and where gaps remain, guiding future research priorities, resource allocation, and public health strategies.</p>
@@ -126,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><p>Extracted publication metadata (titles, dates, and UIDs) from PubMed using the rentrez API.</p></li>
 <li><p>Cleaned and processed the data, including removing stop words, lemmatizing terms, and tokenizing titles to capture high-frequency keywords.</p></li>
-<li><p>Conducted trend analyses over the study period (2014–2024) and visualized the results on an interactive Quarto website.</p></li>
+<li><p>Conducted trend analyses over the study period (2014–2024) and visualized the results on a Quarto website.</p></li>
 <li><p>Published detailed documentation to ensure reproducibility and usability on our GitHub repository.</p></li>
 </ul>
 <p>Prior Work in the Field: Previous research includes Fajardo-Ortiz et al., who analyzed the evolution of biomedical knowledge in HIV research using text mining and network analysis. Additionally, Merson’s work outlined a timeline of key HIV research milestones from 1981 to 2006. However, no prior study has examined broader trends in HIV research topics, especially in areas like public health programming and policy interventions, making our work unique in its scope and focus.</p>
@@ -336,6 +341,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-cleaning" class="level3">
 <h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<p>In this section, we used a custom function to combine datasets from multiple years into one dataset, and several language processing packages to tokenize the text of the article titles and remove stop words.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load relevant packages, clear existing workspace</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -452,6 +458,7 @@ The following object is masked from 'package:readr':
 <span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(combined_articles)</span>
 <span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Call the function to create the analytic dataset</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>all_articles <span class="ot">&lt;-</span> <span class="fu">combine_all_articles</span>(<span class="at">file_path_template =</span> <span class="st">"data/pubmed_hiv_articles_YEAR_YEAR.csv"</span>, </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">years =</span> <span class="dv">2014</span><span class="sc">:</span><span class="dv">2024</span>,</span>
@@ -463,6 +470,7 @@ The following object is masked from 'package:readr':
 </section>
 <section id="data-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="data-analysis">Data Analysis</h3>
+<p>In this section, we conducted a descriptive analysis of the data, producing several visualizations. In the first figure, we depicted the top 15 most commonly used words in the article titles. Based on the top 40 words (not shown in the figure), we developed the themes for the following figures: populations by age/gender, interventions, and comorbidities. In the last figure, we chose to examine how often the word “equity” occurred. Although it was not one of the most common words, we were interested in understanding whether its increasing focus more broadly in public health was replicated in HIV research.</p>
 <section id="figure-1-top-15-words-in-titles-of-hiv-research-articles-2014-2024" class="level4">
 <h4 class="anchored" data-anchor-id="figure-1-top-15-words-in-titles-of-hiv-research-articles-2014-2024">Figure 1: Top 15 Words in Titles of HIV Research Articles, 2014-2024</h4>
 <div class="cell">
@@ -491,6 +499,7 @@ The following object is masked from 'package:readr':
 </section>
 <section id="calculate-proportion-of-hiv-articles-mentioning-keywords-in-title-2014-2024" class="level4">
 <h4 class="anchored" data-anchor-id="calculate-proportion-of-hiv-articles-mentioning-keywords-in-title-2014-2024">Calculate Proportion of HIV Articles Mentioning Keywords in Title, 2014-2024</h4>
+<p>This section calculates the proportion of publications in each year that mention each word. We used the proportion of articles instead of the number of articles because there could have been a different number of articles in each year.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>target_words <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"antiretroviral"</span>, <span class="st">"screen"</span>, <span class="st">"prep"</span>, <span class="st">"prophylaxis"</span>, <span class="st">"tuberculosis"</span>, <span class="st">"hepatitis"</span>, <span class="st">"covid"</span>, <span class="st">"cancer"</span>, <span class="st">"woman"</span>, <span class="st">"adolescent"</span>, <span class="st">"child"</span>, <span class="st">"man"</span>, <span class="st">"equity"</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>

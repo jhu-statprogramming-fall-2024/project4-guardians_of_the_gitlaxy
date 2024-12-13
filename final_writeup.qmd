@@ -7,6 +7,12 @@ format:
 
 # Topics and Trends in HIV Research from 2014-2024
 
+## Team Members
+Thanh Doan (tdoan7 -- tdoan7@jh.edu)
+Ilina Odouard (iodouar1 -- iodouar1@jh.edu)
+Hridika Shah (hshah25 -- hshah25@jh.edu)
+Jonathan Ye (jye41 -- jye41@jh.edu)
+
 ## Introduction
 Our project addresses the question: How have the major topics in HIV research—including clinical advancements, public health programming, and policy interventions—evolved over time from 2014 to 2024, and what patterns or shifts can be identified across these areas? This question is important as it sheds light on areas where significant progress has been made and where gaps remain, guiding future research priorities, resource allocation, and public health strategies.
 
@@ -16,7 +22,7 @@ Goals and Accomplishments: Our initial goal was to analyze trends in HIV researc
 
 *  Cleaned and processed the data, including removing stop words, lemmatizing terms, and tokenizing titles to capture high-frequency keywords.
 
-*  Conducted trend analyses over the study period (2014–2024) and visualized the results on an interactive Quarto website.
+*  Conducted trend analyses over the study period (2014–2024) and visualized the results on a Quarto website.
 
 *  Published detailed documentation to ensure reproducibility and usability on our GitHub repository.
 
@@ -184,6 +190,7 @@ knitr::kable(head(read.csv('data/sample_pubmed_hiv_articles_2000_2000.csv')))
 
 
 ### Data Cleaning
+In this section, we used a custom function to combine datasets from multiple years into one dataset, and several language processing packages to tokenize the text of the article titles and remove stop words.
 ```{r}
 # load relevant packages, clear existing workspace
 library(tidyverse)
@@ -256,6 +263,7 @@ combine_all_articles <- function(file_path_template, years, custom_stop_words = 
 }
 ```
 
+Call the function to create the analytic dataset
 ```{r}
 all_articles <- combine_all_articles(file_path_template = "data/pubmed_hiv_articles_YEAR_YEAR.csv", 
                            years = 2014:2024,
@@ -268,6 +276,7 @@ First, we loaded a number of packages into the library, including Tidyverse, Str
 Within the function, the stop words and custom stop words are combined into one data frame. Then the function initializes an empty combined articles data frame. The function uses a for statement, for each year within the vector of years specified as the input the function will call the CSV (if the file exists). It will ensure that the ‘title’ column is found within that file, and then clean the data. The data cleaning process involves tokenizing the words in the titles, lemmatizing the words, removing stop words, removing numbers, and finally removing empty observation rows. The last few lines of code in the function bind the cleaned data to the empty data frame initialized earlier, and repeat this process for all the years within the year vector. The function will return a final data frame of all the combined articles for the years specified. We included an example call for 2014 to 2024 as this was the dataset used for our analysis.
 
 ### Data Analysis
+In this section, we conducted a descriptive analysis of the data, producing several visualizations. In the first figure, we depicted the top 15 most commonly used words in the article titles. Based on the top 40 words (not shown in the figure), we developed the themes for the following figures: populations by age/gender, interventions, and comorbidities. In the last figure, we chose to examine how often the word "equity" occurred. Although it was not one of the most common words, we were interested in understanding whether its increasing focus more broadly in public health was replicated in HIV research.
 
 #### Figure 1: Top 15 Words in Titles of HIV Research Articles, 2014-2024
 ```{r}
@@ -289,6 +298,7 @@ theme(text = element_text(size = 14))
 
 
 #### Calculate Proportion of HIV Articles Mentioning Keywords in Title, 2014-2024
+This section calculates the proportion of publications in each year that mention each word. We used the proportion of articles instead of the number of articles because there could have been a different number of articles in each year. 
 ``` {r}
 target_words <- c("antiretroviral", "screen", "prep", "prophylaxis", "tuberculosis", "hepatitis", "covid", "cancer", "woman", "adolescent", "child", "man", "equity")
 
